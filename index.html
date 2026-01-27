@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxograma Curricular - Matemática Licenciatura UFMS/CPAR</title>
+    
+    <!-- Fontes Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Icones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Biblioteca Principal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
+
+    <style>
+        :root {
+            --color-bg: #f4f6f9;
+            --color-sidebar: #ffffff;
+            --color-text: #333333;
+            --color-text-secondary: #555555;
+            --color-primary: #0056b3; 
+            
+            /* Cores das Categorias */
+            --cat-basica: #4A90E2;
+            --cat-especifica: #E24A4A;
+            --cat-pratica: #4AE290;
+            --cat-institucional: #E2B04A;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row; 
+        }
+
+        /* --- SIDEBAR (ESQUERDA) --- */
+        .sidebar {
+            width: 360px;
+            background-color: var(--color-sidebar);
+            border-right: 1px solid #ddd; 
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            z-index: 20;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.0rem;
+            font-weight: 400;
+            opacity: 0.95;
+        }
+
+        .stats-container { 
+            padding: 20px; 
+            border-bottom: 1px solid #eee; 
+            font-size: 1.0rem;
+        }
+        
+        .stat-item { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 8px; 
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #f0f0f0;
+        }
+        .stat-item:last-child { border-bottom: none; }
+        .stat-item span { color: #555; }
+        .stat-item strong { font-weight: 700; color: var(--color-primary); }
+
+        .stat-details {
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            color: #555;
+            border-left: 3px solid var(--color-primary);
+            line-height: 1.4;
+        }
+
+        .legend-container { padding: 20px; border-bottom: 1px solid #eee; }
+        .legend-title { 
+            font-size: 1.0rem; 
+            font-weight: 700; 
+            margin-bottom: 12px; 
+            text-transform: uppercase; 
+            color: #444;
+        }
+        
+        .legend-item { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 10px; 
+            font-size: 1.0rem; 
+            cursor: pointer; 
+            transition: background 0.2s;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        .legend-item:hover { background-color: #f0f0f0; }
+        
+        .color-dot { 
+            width: 16px; 
+            height: 16px; 
+            border-radius: 50%; 
+            margin-right: 12px; 
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .alert-box {
+            padding: 15px;
+            margin: 15px 20px;
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            color: #664d03;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .alert-box strong { display: block; margin-bottom: 5px; color: #533f03; }
+
+        .info-box { 
+            padding: 15px; 
+            font-size: 0.95rem; 
+            color: var(--color-text-secondary); 
+            background: #f9f9f9; 
+            margin: 10px 20px; 
+            border-radius: 6px; 
+            border-left: 4px solid var(--color-primary); 
+            line-height: 1.5;
+        }
+
+        /* Wrapper do conteúdo da sidebar */
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .controls { 
+            padding: 20px; 
+            margin-top: auto; 
+            display: flex; 
+            gap: 10px; 
+            border-top: 1px solid #eee;
+        }
+        
+        .btn { 
+            flex: 1; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 1.0rem; 
+            font-weight: 500;
+            background: #e9ecef; 
+            color: #495057;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: #dee2e6; transform: translateY(-1px); }
+        .btn-primary { background: var(--color-primary); color: white; }
+        .btn-primary:hover { background: #004494; box-shadow: 0 2px 5px rgba(0,68,148,0.3); }
+
+        /* --- AREA PRINCIPAL (DIREITA) --- */
+        .main-content {
+            flex-grow: 1;
+            position: relative;
+            background-color: #fafafa;
+            overflow: hidden;
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        #cy {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            outline: none;
+        }
+
+        #loading-msg {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: #999; font-size: 1.4rem; z-index: 0; pointer-events: none;
+        }
+
+        /* --- TOOLTIP (POPUP) --- */
+        #tooltip {
+            display: none;
+            position: fixed;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            pointer-events: none;
+            z-index: 9999;
+            max-width: 300px;
+            border: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+            border-left: 5px solid #ccc;
+        }
+
+        #tooltip h4 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 1rem;
+            line-height: 1.3;
+        }
+
+        #tooltip .meta {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: #666;
+            align-items: center;
+        }
+
+        #tooltip .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        #tooltip .reqs {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+            font-size: 0.85rem;
+            color: #d32f2f;
+        }
+
+        /* === VERSÃO MOBILE === */
+        @media (max-width: 768px) {
+            body { 
+                flex-direction: column; 
+            }
+            
+            .sidebar { 
+                width: 100%; 
+                height: auto; 
+                max-height: none;
+                border-right: none; 
+                border-bottom: 1px solid #ddd;
+                overflow: visible;
+            }
+            
+            .sidebar-header { 
+                flex-direction: row; 
+                justify-content: space-between; 
+                align-items: center; 
+                padding: 12px 15px; 
+                text-align: left;
+                cursor: pointer;
+            }
+            
+            .sidebar-header h2 { 
+                font-size: 1.1rem; 
+                margin: 0; 
+            }
+            
+            .sidebar-header h3 { 
+                display: none; 
+            }
+            
+            /* Indicador de menu hambúrguer */
+            .sidebar-header::after {
+                content: '☰';
+                font-size: 1.2rem;
+                transition: transform 0.3s;
+            }
+            
+            .sidebar.collapsed .sidebar-header::after {
+                content: '☰';
+            }
+            
+            .sidebar:not(.collapsed) .sidebar-header::after {
+                content: '✕';
+            }
+            
+            /* Conteúdo colapsável */
+            .sidebar-content {
+                max-height: 60vh;
+                overflow-y: auto;
+                transition: max-height 0.3s ease, opacity 0.3s ease;
+            }
+            
+            .sidebar.collapsed .sidebar-content {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+            }
+            
+            .stats-container { 
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .stat-item {
+                margin-bottom: 6px;
+                padding-bottom: 4px;
+            }
+            
+            .stat-details {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+            
+            .legend-container { 
+                padding: 12px 15px;
+            }
+            
+            .legend-title {
+                font-size: 0.9rem;
+                margin-bottom: 10px;
+            }
+            
+            .legend-item { 
+                font-size: 0.9rem;
+                padding: 6px 4px;
+                margin-bottom: 6px;
+            }
+            
+            .color-dot {
+                width: 14px;
+                height: 14px;
+                margin-right: 10px;
+            }
+            
+            .alert-box {
+                margin: 10px 15px;
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+            
+            .info-box { 
+                margin: 10px 15px;
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+            
+            .controls { 
+                padding: 10px 15px;
+                background: white;
+                border-top: 1px solid #eee;
+            }
+            
+            .btn {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            
+            /* Área principal ocupa o espaço restante */
+            .main-content {
+                flex: 1;
+                min-height: 50vh;
+            }
+            
+            /* Tooltip ajustado para mobile */
+            #tooltip {
+                max-width: 250px;
+                font-size: 0.85rem;
+                padding: 12px;
+            }
+            
+            #tooltip h4 {
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* Telas muito pequenas */
+        @media (max-width: 480px) {
+            .sidebar-header h2 {
+                font-size: 1rem;
+            }
+            
+            .stat-item {
+                font-size: 0.85rem;
+            }
+            
+            .legend-item {
+                font-size: 0.85rem;
+            }
+            
+            .btn {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR (Esquerda) -->
+    <aside class="sidebar collapsed" id="sidebar">
+        <div class="sidebar-header" onclick="toggleSidebar()">
+            <h2>Matemática</h2>
+            <h3>Licenciatura • UFMS/CPAR</h3>
+        </div>
+
+        <div class="sidebar-content">
+            <div class="stats-container">
+                <div class="stat-item"><span>Carga Horária Total:</span> <strong>3.296h</strong></div>
+                <div class="stat-item"><span>Duração:</span> <strong>8 Semestres</strong></div>
+                <div class="stat-item"><span>Disciplinas totais PPC:</span> <strong>55</strong></div>
+                <div class="stat-item"><span>Vigência:</span> <strong>a partir de 2026/1</strong></div>
+                
+                <div class="stat-details">
+                    <i class="fas fa-check-circle" style="color: var(--cat-pratica)"></i> Inclui 200h de Ativ. Complementares, 236h de Extensão e 36h de Disciplinas Optativas.
+                </div>
+            </div>
+
+            <div class="legend-container">
+                <div class="legend-title">Legenda (Clique para filtrar)</div>
+                <div class="legend-item" onclick="filterCategory('basica')">
+                    <div class="color-dot" style="background-color: var(--cat-basica);"></div>
+                    <span>Formação Básica</span>
+                </div>
+                <div class="legend-item" onclick="filterCategory('especifica')">
+                    <div class="color-dot" style="background-color: var(--cat-especifica);"></div>
+                    <span>Formação Específica</span>
+                </div>
+                <div class="legend-item" onclick="filterCategory('pratica')">
+                    <div class="color-dot" style="background-color: var(--cat-pratica);"></div>
+                    <span>Dimensões Práticas</span>
+                </div>
+                <div class="legend-item" onclick="filterCategory('institucional')">
+                    <div class="color-dot" style="background-color: var(--cat-institucional);"></div>
+                    <span>Institucionais (EAD)</span>
+                </div>
+            </div>
+
+            <div class="alert-box">
+                <strong><i class="fas fa-info-circle"></i> Nota:</strong>
+                As <strong>Componentes Institucionais</strong> (amarelo) são ofertadas continuamente pela AGEAD e podem ser cursadas a qualquer momento.
+            </div>
+
+            <div class="info-box">
+                <strong>Dica:</strong><br>
+                Passe o mouse para ver detalhes. Clique em uma disciplina para destacar seus pré-requisitos (setas chegando) e as disciplinas que ela libera (setas saindo).
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="resetView()"><i class="fas fa-sync-alt"></i> Restaurar</button>
+            <button class="btn btn-primary" onclick="fitGraph()"><i class="fas fa-expand"></i> Ajustar Tela</button>
+        </div>
+    </aside>
+
+    <!-- AREA PRINCIPAL (Direita - Fluxograma) -->
+    <main class="main-content">
+        <div id="loading-msg">
+            <i class="fas fa-spinner fa-spin"></i> Gerando fluxograma...
+        </div>
+        <div id="cy"></div>
+    </main>
+
+    <!-- TOOLTIP EXTERNO -->
+    <div id="tooltip"></div>
+
+    <!-- SCRIPT -->
+    <script>
+        // 1. DADOS
+        const COLORS = {
+            basica: '#4A90E2',
+            especifica: '#E24A4A',
+            pratica: '#4AE290',
+            institucional: '#E2B04A'
+        };
+
+        const subjects = [
+            // 1º SEMESTRE
+            { id: 's1_1', label: 'Elementos Números', full: 'Elementos para o Ensino de Números e Operações', h: 75, cat: 'basica', sem: 1 },
+            { id: 's1_2', label: 'Fund. Geometria', full: 'Fundamentos para o Ensino de Geometria, Grandezas e Medidas', h: 60, cat: 'basica', sem: 1 },
+            { id: 's1_3', label: 'Políticas Educ.', full: 'Políticas Educacionais', h: 45, cat: 'basica', sem: 1 },
+            { id: 's1_4', label: 'Prática I', full: 'Prática de Ensino de Matemática I', h: 60, cat: 'pratica', sem: 1 },
+            { id: 's1_5', label: 'Rac. Lógico', full: 'Raciocínio Lógico na Educação Básica', h: 60, cat: 'basica', sem: 1 },
+
+            // 2º SEMESTRE
+            { id: 's2_1', label: 'Álgebra Básica', full: 'Álgebra na Educação Básica', h: 60, cat: 'basica', sem: 2 },
+            { id: 's2_2', label: 'Prob. e Est.', full: 'Conceitos para o Ensino de Probabilidade e Estatística', h: 60, cat: 'basica', sem: 2 },
+            { id: 's2_3', label: 'Fund. Didática', full: 'Fundamentos de Didática', h: 45, cat: 'basica', sem: 2, important: true },
+            { id: 's2_4', label: 'Ensino Funções', full: 'Fundamentos e Metodologias para o Ensino de Funções', h: 75, cat: 'basica', sem: 2 },
+            { id: 's2_5', label: 'Prática II', full: 'Prática de Ensino de Matemática II', h: 60, cat: 'pratica', sem: 2 },
+
+            // 3º SEMESTRE
+            { id: 's3_1', label: 'Cálculo I', full: 'Cálculo I', h: 60, cat: 'especifica', sem: 3, important: true },
+            { id: 's3_2', label: 'Geo. Analítica I', full: 'Geometria Analítica I', h: 60, cat: 'especifica', sem: 3, important: true },
+            { id: 's3_3', label: 'Leit. e Prod. Texto', full: 'Leitura e Produção de Textos', h: 60, cat: 'basica', sem: 3 },
+            { id: 's3_4', label: 'Lógica Mat.', full: 'Lógica Matemática', h: 60, cat: 'especifica', sem: 3 },
+            { id: 's3_5', label: 'Psicologia Educ.', full: 'Psicologia e Educação', h: 45, cat: 'basica', sem: 3 },
+
+            // 4º SEMESTRE
+            { id: 's4_1', label: 'Cálculo II', full: 'Cálculo II', h: 60, cat: 'especifica', sem: 4, important: true },
+            { id: 's4_2', label: 'Ed. Especial', full: 'Educação Especial', h: 45, cat: 'basica', sem: 4 },
+            { id: 's4_3', label: 'Geo. Analítica II', full: 'Geometria Analítica II', h: 60, cat: 'especifica', sem: 4 },
+            { id: 's4_4', label: 'Prob. Est. I', full: 'Probabilidade e Estatística I', h: 60, cat: 'especifica', sem: 4 },
+            { id: 's4_5', label: 'Tec. Digital', full: 'Tecnologias Digitais e o Ensino de Matemática', h: 60, cat: 'especifica', sem: 4 },
+
+            // 5º SEMESTRE
+            { id: 's5_1', label: 'Álgebra I', full: 'Álgebra I', h: 60, cat: 'especifica', sem: 5 },
+            { id: 's5_2', label: 'Álgebra Linear I', full: 'Álgebra Linear I', h: 60, cat: 'especifica', sem: 5 },
+            { id: 's5_3', label: 'Cálculo III', full: 'Cálculo III', h: 60, cat: 'especifica', sem: 5, important: true },
+            { id: 's5_4', label: 'Estágio I', full: 'Estágio Obrigatório I', h: 100, cat: 'pratica', sem: 5, important: true },
+            { id: 's5_5', label: 'Prática III', full: 'Prática de Ensino em Matemática III', h: 60, cat: 'pratica', sem: 5 },
+            { id: 's5_6', label: 'Prob. Est. II', full: 'Probabilidade e Estatística II', h: 60, cat: 'especifica', sem: 5 },
+
+            // 6º SEMESTRE
+            { id: 's6_1', label: 'Álgebra II', full: 'Álgebra II', h: 60, cat: 'especifica', sem: 6 },
+            { id: 's6_2', label: 'Álgebra Linear II', full: 'Álgebra Linear II', h: 60, cat: 'especifica', sem: 6 },
+            { id: 's6_3', label: 'Cálculo IV', full: 'Cálculo IV', h: 60, cat: 'especifica', sem: 6 },
+            { id: 's6_4', label: 'Estágio II', full: 'Estágio Obrigatório II', h: 100, cat: 'pratica', sem: 6 },
+            { id: 's6_5', label: 'Lab. Ensino', full: 'Laboratório de Ensino de Matemática', h: 60, cat: 'pratica', sem: 6 },
+            { id: 's6_6', label: 'Prática IV', full: 'Prática de Ensino em Matemática IV', h: 60, cat: 'pratica', sem: 6 },
+
+            // 7º SEMESTRE
+            { id: 's7_1', label: 'Desenv. Prof. Doc.', full: 'Desenvolvimento Profissional Docente', h: 30, cat: 'basica', sem: 7 },
+            { id: 's7_2', label: 'Estágio III', full: 'Estágio Obrigatório III', h: 100, cat: 'pratica', sem: 7 },
+            { id: 's7_3', label: 'Intro. Análise Real', full: 'Introdução à Análise Real', h: 60, cat: 'especifica', sem: 7 },
+            { id: 's7_4', label: 'Met. Pesq. Educ.', full: 'Metodologia de Pesquisa Educacional', h: 60, cat: 'especifica', sem: 7 },
+            { id: 's7_5', label: 'Org. Curricular', full: 'Organização Curricular e Gestão da Escola', h: 60, cat: 'basica', sem: 7 },
+            { id: 's7_6', label: 'Prática V', full: 'Prática de Ensino em Matemática V', h: 60, cat: 'pratica', sem: 7 },
+            { id: 's7_7', label: 'Tendências Ed. Mat.', full: 'Tendências em Educação Matemática', h: 60, cat: 'especifica', sem: 7 },
+
+            // 8º SEMESTRE
+            { id: 's8_1', label: 'Estágio IV', full: 'Estágio Obrigatório IV', h: 100, cat: 'pratica', sem: 8 },
+            { id: 's8_2', label: 'Estudo de Libras', full: 'Estudo de Libras', h: 45, cat: 'basica', sem: 8 },
+            { id: 's8_3', label: 'Fund. Hist. Soc.', full: 'Fundamentos Históricos, Sociológicos e Filosóficos da Educação', h: 45, cat: 'basica', sem: 8 },
+            { id: 's8_4', label: 'Geo. Euclidiana', full: 'Geometria Euclidiana', h: 60, cat: 'especifica', sem: 8 },
+            { id: 's8_5', label: 'Hist. Matemática', full: 'História da Matemática', h: 60, cat: 'especifica', sem: 8 },
+            { id: 's8_6', label: 'Prática VI', full: 'Prática de Ensino em Matemática VI', h: 60, cat: 'pratica', sem: 8 },
+
+            // COMPONENTES INSTITUCIONAIS (Semestre 9 - Flexível)
+            { id: 'i1', label: 'Empreendedorismo', full: 'Empreendedorismo e Inovação', h: 30, cat: 'institucional', sem: 9 },
+            { id: 'i2', label: 'I.A. Fundamentos', full: 'Inteligência Artificial: Fundamentos e Práticas', h: 30, cat: 'institucional', sem: 9 },
+            { id: 'i3', label: 'Vida e Cidadania', full: 'Vida, Cidadania e Sustentabilidade', h: 30, cat: 'institucional', sem: 9 }
+        ];
+
+        const prerequisites = [
+            { source: 's3_1', target: 's4_1' }, 
+            { source: 's4_1', target: 's5_3' }, 
+            { source: 's5_3', target: 's6_3' }, 
+            { source: 's3_2', target: 's4_3' }, 
+            { source: 's2_3', target: 's5_4' }, 
+            { source: 's4_1', target: 's8_5', type: 'soft' } // Recomendação
+        ];
+
+        // --- 2. FUNÇÃO DE LAYOUT MANUAL (GRID CENTRALIZADO) ---
+        function calculateManualPositions() {
+            const positions = {};
+            const semesterHeight = 160; 
+            const startY = 80;         
+            const nodeWidth = 180; // LARGURA DOS NODES
+            const gap = 30;             
+            
+            // Agrupar por semestre
+            const semGroups = {};
+            subjects.forEach(sub => {
+                if(!semGroups[sub.sem]) semGroups[sub.sem] = [];
+                semGroups[sub.sem].push(sub.id);
+            });
+
+            // Largura virtual da tela aumentada para centralizar linhas mais largas
+            const canvasWidth = 2000; 
+
+            for(let sem = 1; sem <= 9; sem++) {
+                const nodes = semGroups[sem] || [];
+                const rowWidth = (nodes.length * nodeWidth) + ((nodes.length - 1) * gap);
+                const startX = (canvasWidth - rowWidth) / 2; // Centralizar
+
+                nodes.forEach((nodeId, idx) => {
+                    positions[nodeId] = {
+                        x: startX + (idx * (nodeWidth + gap)),
+                        y: startY + ((sem-1) * semesterHeight) 
+                    };
+                });
+            }
+            return positions;
+        }
+
+        const elements = {
+            nodes: subjects.map(sub => ({
+                data: {
+                    id: sub.id,
+                    label: sub.label,
+                    full: sub.full,
+                    hours: sub.h,
+                    category: sub.cat,
+                    semester: sub.sem,
+                    color: COLORS[sub.cat]
+                }
+            })),
+            edges: prerequisites.map((preq, index) => ({
+                data: {
+                    id: `edge_${index}`,
+                    source: preq.source,
+                    target: preq.target,
+                    isPrerequisite: true,
+                    type: preq.type || 'hard'
+                }
+            }))
+        };
+
+        // --- 3. INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof cytoscape === 'undefined') {
+                document.getElementById('loading-msg').innerHTML = "<h3 style='color:red'>Erro: Biblioteca não carregou. Verifique sua conexão.</h3>";
+                return;
+            }
+
+            const manualPositions = calculateManualPositions();
+
+            try {
+                const cy = cytoscape({
+                    container: document.getElementById('cy'),
+                    elements: elements,
+                    style: [
+                        { selector: 'node', style: {
+                            'background-color': 'data(color)', 
+                            'label': 'data(label)', 
+                            'color': '#fff',
+                            'text-valign': 'center', 
+                            'text-halign': 'center', 
+                            /* DIMENSÕES */
+                            'width': '180px', 
+                            'height': '70px', 
+                            'shape': 'round-rectangle', 
+                            'font-family': 'Roboto',
+                            /* FONTE */
+                            'font-size': '12px', 
+                            'font-weight': '500',
+                            'text-wrap': 'wrap', 
+                            /* ÁREA DE TEXTO */
+                            'text-max-width': '160px', 
+                            'line-height': 1.3,
+                            'border-width': 0,
+                            'text-outline-width': 0,
+                            'shadow-blur': 3, 'shadow-color': 'rgba(0,0,0,0.1)', 'shadow-offset-y': 2,
+                            'transition-property': 'background-color, opacity, border-color',
+                            'transition-duration': '0.4s',
+                            'transition-timing-function': 'ease-in-out'
+                        }},
+                        { selector: 'node:selected', style: { 
+                            'border-width': 4, 
+                            'border-color': '#333',
+                            'shadow-blur': 10, 'shadow-color': 'rgba(0,0,0,0.3)'
+                        }},
+                        { selector: 'node.faded', style: { 
+                            'opacity': 0.15,
+                            'shadow-opacity': 0 
+                        }},
+                        { selector: 'edge', style: {
+                            'width': 3, 
+                            'curve-style': 'bezier', 
+                            'target-arrow-shape': 'triangle',
+                            'line-color': '#ccc', 
+                            'target-arrow-color': '#ccc',
+                            'arrow-scale': 1.2,
+                            'transition-property': 'opacity, line-color, target-arrow-color',
+                            'transition-duration': '0.4s'
+                        }},
+                        { selector: 'edge[isPrerequisite]', style: {
+                            'width': 4, 
+                            'line-color': '#666', 
+                            'target-arrow-color': '#666'
+                        }},
+                        { selector: 'edge[type="soft"]', style: {
+                            'line-style': 'dashed',
+                            'line-dash-pattern': [6, 3],
+                            'line-color': '#999',
+                            'target-arrow-color': '#999'
+                        }},
+                        { selector: 'edge.faded', style: { 'opacity': 0.1 }}
+                    ],
+                    layout: {
+                        name: 'preset',
+                        positions: function(node) {
+                            return manualPositions[node.id()];
+                        },
+                        fit: true,
+                        padding: 60
+                    },
+                    minZoom: 0.2, 
+                    maxZoom: 2,
+                    wheelSensitivity: 0.3,
+                    autoungrabify: true,  // Impede arrastar os nodes
+                    boxSelectionEnabled: false  // Desabilita seleção por caixa
+                });
+
+                document.getElementById('loading-msg').style.display = 'none';
+
+                // --- TOOLTIP LOGIC ---
+                const tooltip = document.getElementById('tooltip');
+
+                document.addEventListener('mousemove', function(e) {
+                    if (tooltip.style.display === 'block') {
+                        tooltip.style.left = (e.clientX + 15) + 'px';
+                        tooltip.style.top = (e.clientY + 20) + 'px';
+                    }
+                });
+
+                cy.on('mouseover', 'node', function(evt) {
+                    const node = evt.target;
+                    const data = node.data();
+                    let catName = data.category === 'basica' ? 'Formação Básica' :
+                                  data.category === 'especifica' ? 'Formação Específica' :
+                                  data.category === 'pratica' ? 'Dimensões Práticas' : 'Institucional';
+                    
+                    let semText = data.semester === 9 ? "Oferta Contínua (AGEAD)" : `${data.semester}º Semestre`;
+                    
+                    let preReqInfo = "";
+                    const incomingEdges = node.incomers('edge[isPrerequisite]');
+                    if(incomingEdges.length > 0) {
+                        preReqInfo = `<div class="reqs">⚠️ Requer aprovação anterior</div>`;
+                    }
+
+                    tooltip.innerHTML = `
+                        <h4>${data.full}</h4>
+                        <div class="meta">
+                            <span class="badge" style="background-color: ${data.color}">${catName}</span>
+                            <span>⏱️ ${data.hours}h</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #555; margin-top:5px;">
+                            📅 ${semText}
+                        </div>
+                        ${preReqInfo}
+                    `;
+                    tooltip.style.borderLeftColor = data.color;
+                    tooltip.style.display = 'block';
+                    document.body.style.cursor = 'pointer';
+                });
+
+                cy.on('mouseout', 'node', function() {
+                    tooltip.style.display = 'none';
+                    document.body.style.cursor = 'default';
+                });
+
+                // Clique (Highlight)
+                cy.on('tap', 'node', function(evt) {
+                    const node = evt.target;
+                    cy.elements().removeClass('faded');
+                    cy.elements().addClass('faded');
+                    node.removeClass('faded');
+                    node.successors().removeClass('faded'); 
+                    node.predecessors().removeClass('faded'); 
+                    node.select();
+                });
+
+                cy.on('tap', function(evt) {
+                    if(evt.target === cy){
+                        cy.elements().removeClass('faded');
+                        cy.elements().unselect();
+                    }
+                });
+
+                // Funções Globais
+                window.resetView = function() {
+                    cy.elements().removeClass('faded');
+                    cy.elements().unselect();
+                    window.fitGraph(); 
+                };
+
+                window.fitGraph = function() {
+                    cy.animate({
+                        fit: { eles: cy.elements(), padding: 60 },
+                        duration: 500
+                    });
+                };
+
+                window.filterCategory = function(cat) {
+                    cy.elements().removeClass('faded'); 
+                    setTimeout(() => {
+                        cy.elements().addClass('faded');
+                        const selectedNodes = cy.nodes(`[category = "${cat}"]`);
+                        selectedNodes.removeClass('faded');
+                    }, 10);
+                };
+
+                // Ajuste inicial
+                setTimeout(() => { cy.fit(null, 60); }, 200);
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading-msg').innerHTML = "<h3 style='color:red'>Erro ao desenhar grafo.</h3>";
+            }
+        });
+
+        // === CONTROLE DO SIDEBAR MOBILE ===
+        window.toggleSidebar = function() {
+            // Só funciona em telas mobile
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('collapsed');
+            }
+        };
+
+        // Configuração inicial baseada no tamanho da tela
+        function setupSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('collapsed');
+            } else {
+                sidebar.classList.remove('collapsed');
+            }
+        }
+
+        // Executar ao carregar e ao redimensionar
+        window.addEventListener('load', setupSidebar);
+        window.addEventListener('resize', setupSidebar);
+    </script>
+
+</body>
+</html>
