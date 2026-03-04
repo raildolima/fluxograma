@@ -3,854 +3,1215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluxograma Curricular - Matemática Licenciatura UFMS/CPAR</title>
-    
-    <!-- Fontes Google -->
+    <title>Fluxograma Curricular — Matemática Licenciatura UFMS/CPAR</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Icones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Biblioteca Principal -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
-
     <style>
         :root {
-            --color-bg: #f4f6f9;
-            --color-sidebar: #ffffff;
-            --color-text: #333333;
-            --color-text-secondary: #555555;
-            --color-primary: #0056b3; 
-            
-            /* Cores das Categorias */
-            --cat-basica: #4A90E2;
-            --cat-especifica: #E24A4A;
-            --cat-pratica: #4AE290;
-            --cat-institucional: #E2B04A;
+            --cat-basica:       #1D4ED8;
+            --cat-especifica:   #B91C1C;
+            --cat-pratica:      #15803D;
+            --cat-institucional:#B45309;
+            --sidebar-w:        340px;
+            --panel-w:          380px;
+            --bg:               #f0f2f5;
+            --surface:          #ffffff;
+            --border:           #e2e6ea;
+            --text:             #1a202c;
+            --text-muted:       #6b7280;
+            --primary:          #1a56db;
+            --primary-dark:     #1e429f;
+            --radius:           10px;
+            --shadow:           0 4px 24px rgba(0,0,0,0.09);
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: var(--color-bg);
-            color: var(--color-text);
+            background: var(--bg);
+            color: var(--text);
             height: 100vh;
             overflow: hidden;
             display: flex;
-            flex-direction: row; 
+            flex-direction: row;
         }
 
-        /* --- SIDEBAR (ESQUERDA) --- */
+        /* ═══════════════════════════ SIDEBAR ═══════════════════════════ */
         .sidebar {
-            width: 360px;
-            background-color: var(--color-sidebar);
-            border-right: 1px solid #ddd; 
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-            z-index: 20;
-            overflow-y: auto;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+            z-index: 30;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1a56db 100%);
+            color: white;
             flex-shrink: 0;
         }
-
-        .sidebar-header {
-            padding: 25px 20px;
-            background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
-            color: white;
-            text-align: center;
+        .sidebar-header .brand {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            gap: 10px;
+            margin-bottom: 4px;
         }
+        .sidebar-header .brand-icon {
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.18);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+        }
+        .sidebar-header h2 { font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
+        .sidebar-header h3 { font-size: 0.82rem; font-weight: 400; opacity: 0.85; margin-top: 2px; }
 
-        .sidebar-header h2 {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .sidebar-header h3 {
-            font-size: 1.0rem;
-            font-weight: 400;
-            opacity: 0.95;
-        }
-
-        .stats-container { 
-            padding: 20px; 
-            border-bottom: 1px solid #eee; 
-            font-size: 1.0rem;
-        }
-        
-        .stat-item { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 8px; 
-            padding-bottom: 5px;
-            border-bottom: 1px dashed #f0f0f0;
-        }
-        .stat-item:last-child { border-bottom: none; }
-        .stat-item span { color: #555; }
-        .stat-item strong { font-weight: 700; color: var(--color-primary); }
-
-        .stat-details {
-            margin-top: 10px;
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 0.85rem;
-            color: #555;
-            border-left: 3px solid var(--color-primary);
-            line-height: 1.4;
-        }
-
-        .legend-container { padding: 20px; border-bottom: 1px solid #eee; }
-        .legend-title { 
-            font-size: 1.0rem; 
-            font-weight: 700; 
-            margin-bottom: 12px; 
-            text-transform: uppercase; 
-            color: #444;
-        }
-        
-        .legend-item { 
-            display: flex; 
-            align-items: center; 
-            margin-bottom: 10px; 
-            font-size: 1.0rem; 
-            cursor: pointer; 
-            transition: background 0.2s;
-            padding: 4px;
-            border-radius: 4px;
-        }
-        .legend-item:hover { background-color: #f0f0f0; }
-        
-        .color-dot { 
-            width: 16px; 
-            height: 16px; 
-            border-radius: 50%; 
-            margin-right: 12px; 
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .alert-box {
-            padding: 15px;
-            margin: 15px 20px;
-            background-color: #fff8e1;
-            border-left: 4px solid #ffc107;
-            color: #664d03;
-            border-radius: 4px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-        .alert-box strong { display: block; margin-bottom: 5px; color: #533f03; }
-
-        .info-box { 
-            padding: 15px; 
-            font-size: 0.95rem; 
-            color: var(--color-text-secondary); 
-            background: #f9f9f9; 
-            margin: 10px 20px; 
-            border-radius: 6px; 
-            border-left: 4px solid var(--color-primary); 
-            line-height: 1.5;
-        }
-
-        /* Wrapper do conteúdo da sidebar */
-        .sidebar-content {
-            display: flex;
-            flex-direction: column;
+        .sidebar-scroll {
             flex: 1;
             overflow-y: auto;
+            padding-bottom: 8px;
         }
+        .sidebar-scroll::-webkit-scrollbar { width: 5px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
 
-        .controls { 
-            padding: 20px; 
-            margin-top: auto; 
-            display: flex; 
-            gap: 10px; 
-            border-top: 1px solid #eee;
+        /* Meu Semestre */
+        .section { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+        .section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
         }
-        
-        .btn { 
-            flex: 1; 
-            padding: 12px; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 1.0rem; 
-            font-weight: 500;
-            background: #e9ecef; 
-            color: #495057;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px;
-            transition: all 0.2s;
-        }
-        .btn:hover { background: #dee2e6; transform: translateY(-1px); }
-        .btn-primary { background: var(--color-primary); color: white; }
-        .btn-primary:hover { background: #004494; box-shadow: 0 2px 5px rgba(0,68,148,0.3); }
-
-        /* --- AREA PRINCIPAL (DIREITA) --- */
-        .main-content {
-            flex-grow: 1;
-            position: relative;
-            background-color: #fafafa;
-            overflow: hidden;
-            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-
-        #cy {
+        .semester-select {
             width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            outline: none;
+            padding: 8px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            font-size: 0.9rem;
+            color: var(--text);
+            background: var(--bg);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        .semester-select:focus { outline: none; border-color: var(--primary); }
+
+        /* Progresso */
+        .progress-bar-wrap { margin-top: 8px; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
+        .progress-bar { height: 8px; background: #e5e7eb; border-radius: 99px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #15803D, #22c55e); border-radius: 99px; transition: width 0.4s ease; }
+
+        /* Stats */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+        .stat-card {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+        }
+        .stat-card .val { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
+        .stat-card .key { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
+        .stat-full { grid-column: 1 / -1; }
+        .stat-note {
+            margin-top: 8px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            background: #f8f9fa;
+            border-left: 3px solid var(--primary);
+            padding: 8px 10px;
+            border-radius: 0 6px 6px 0;
+            line-height: 1.5;
         }
 
+        /* Legenda */
+        .legend-item {
+            display: flex; align-items: center;
+            padding: 6px 8px; border-radius: 6px;
+            cursor: pointer; transition: background 0.15s;
+            margin-bottom: 3px;
+            font-size: 0.88rem;
+        }
+        .legend-item:hover { background: var(--bg); }
+        .legend-item.active { background: var(--bg); outline: 2px solid var(--primary); }
+        .color-dot {
+            width: 14px; height: 14px; border-radius: 4px;
+            margin-right: 10px; flex-shrink: 0;
+        }
+        .legend-item span { flex: 1; }
+        .legend-count {
+            background: #e5e7eb;
+            color: var(--text-muted);
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 1px 7px;
+        }
+        .legend-note {
+            margin-top: 8px;
+            font-size: 0.77rem;
+            color: var(--text-muted);
+            background: #fffbeb;
+            border-left: 3px solid #d97706;
+            padding: 8px 10px;
+            border-radius: 0 6px 6px 0;
+            line-height: 1.5;
+        }
+
+        /* Dica */
+        .tip-box {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: #f0f9ff;
+            border-left: 3px solid #0ea5e9;
+            padding: 9px 11px;
+            border-radius: 0 6px 6px 0;
+            line-height: 1.5;
+        }
+
+        /* Controls */
+        .controls {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+            background: var(--surface);
+        }
+        .btn {
+            flex: 1; padding: 10px 8px;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 500;
+            background: var(--surface);
+            color: var(--text);
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            transition: all 0.18s;
+        }
+        .btn:hover { background: var(--bg); border-color: #9ca3af; }
+        .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+        .btn-danger { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+        .btn-danger:hover { background: #fecaca; }
+
+        /* ═══════════════════════════ MAIN CANVAS ═══════════════════════════ */
+        .main-content {
+            flex: 1;
+            position: relative;
+            background: #f7f8fc;
+            background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+            background-size: 22px 22px;
+            overflow: hidden;
+        }
+        #cy { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; outline: none; }
         #loading-msg {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #999; font-size: 1.4rem; z-index: 0; pointer-events: none;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            color: #9ca3af; font-size: 1.2rem; z-index: 0; pointer-events: none; text-align: center;
         }
+        #loading-msg i { display: block; margin-bottom: 10px; font-size: 2rem; }
 
-        /* --- TOOLTIP (POPUP) --- */
+        /* ═══════════════════════════ TOOLTIP (HOVER) ═══════════════════════════ */
         #tooltip {
             display: none;
             position: fixed;
-            background: rgba(255, 255, 255, 0.98);
-            padding: 15px;
+            background: rgba(255,255,255,0.97);
+            padding: 11px 14px;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.14);
             pointer-events: none;
             z-index: 9999;
-            max-width: 300px;
-            border: 1px solid #e0e0e0;
-            font-size: 0.9rem;
-            border-left: 5px solid #ccc;
-        }
-
-        #tooltip h4 {
-            margin: 0 0 8px 0;
-            color: #333;
-            font-size: 1rem;
-            line-height: 1.3;
-        }
-
-        #tooltip .meta {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 8px;
+            max-width: 260px;
+            border: 1px solid #e5e7eb;
             font-size: 0.85rem;
-            color: #666;
-            align-items: center;
+            border-left: 4px solid #ccc;
         }
-
+        #tooltip h4 { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 6px; line-height: 1.3; }
+        #tooltip .tip-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         #tooltip .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            padding: 2px 8px; border-radius: 4px;
+            color: white; font-weight: 600; font-size: 0.72rem;
+            text-transform: uppercase; letter-spacing: 0.4px;
         }
-        
-        #tooltip .reqs {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #eee;
-            font-size: 0.85rem;
-            color: #d32f2f;
+        #tooltip .tip-info { color: var(--text-muted); font-size: 0.82rem; }
+        #tooltip .tip-prereq { margin-top: 7px; font-size: 0.8rem; color: #dc2626; font-weight: 500; }
+        #tooltip .tip-completed { margin-top: 7px; font-size: 0.8rem; color: #15803d; font-weight: 500; }
+        #tooltip .tip-hint { margin-top: 6px; font-size: 0.76rem; color: #9ca3af; font-style: italic; }
+
+        /* ═══════════════════════════ DETAIL PANEL ═══════════════════════════ */
+        #detail-panel {
+            position: fixed;
+            top: 0; right: 0;
+            width: var(--panel-w);
+            height: 100vh;
+            background: var(--surface);
+            box-shadow: -6px 0 30px rgba(0,0,0,0.13);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #detail-panel.open { transform: translateX(0); }
+
+        .panel-header {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .panel-header-top {
+            display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px;
+        }
+        .panel-close {
+            background: var(--bg); border: none; cursor: pointer;
+            width: 32px; height: 32px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 1rem;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .panel-close:hover { background: #fee2e2; color: #dc2626; }
+        .panel-title { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.35; flex: 1; }
+        .panel-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+        .panel-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px; border-radius: 6px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+        }
+        .panel-badge-neutral {
+            background: var(--bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            font-weight: 500;
         }
 
-        /* === VERSÃO MOBILE === */
-        @media (max-width: 768px) {
-            body { 
-                flex-direction: column; 
-            }
-            
-            .sidebar { 
-                width: 100%; 
-                height: auto; 
-                max-height: none;
-                border-right: none; 
-                border-bottom: 1px solid #ddd;
-                overflow: visible;
-            }
-            
-            .sidebar-header { 
-                flex-direction: row; 
-                justify-content: space-between; 
-                align-items: center; 
-                padding: 12px 15px; 
-                text-align: left;
-                cursor: pointer;
-            }
-            
-            .sidebar-header h2 { 
-                font-size: 1.1rem; 
-                margin: 0; 
-            }
-            
-            .sidebar-header h3 { 
-                display: none; 
-            }
-            
-            /* Indicador de menu hambúrguer */
-            .sidebar-header::after {
-                content: '☰';
-                font-size: 1.2rem;
-                transition: transform 0.3s;
-            }
-            
-            .sidebar.collapsed .sidebar-header::after {
-                content: '☰';
-            }
-            
-            .sidebar:not(.collapsed) .sidebar-header::after {
-                content: '✕';
-            }
-            
-            /* Conteúdo colapsável */
-            .sidebar-content {
-                max-height: 60vh;
-                overflow-y: auto;
-                transition: max-height 0.3s ease, opacity 0.3s ease;
-            }
-            
-            .sidebar.collapsed .sidebar-content {
-                max-height: 0;
-                overflow: hidden;
-                opacity: 0;
-            }
-            
-            .stats-container { 
-                padding: 12px 15px;
-                font-size: 0.9rem;
-            }
-            
-            .stat-item {
-                margin-bottom: 6px;
-                padding-bottom: 4px;
-            }
-            
-            .stat-details {
-                font-size: 0.8rem;
-                padding: 8px;
-            }
-            
-            .legend-container { 
-                padding: 12px 15px;
-            }
-            
-            .legend-title {
-                font-size: 0.9rem;
-                margin-bottom: 10px;
-            }
-            
-            .legend-item { 
-                font-size: 0.9rem;
-                padding: 6px 4px;
-                margin-bottom: 6px;
-            }
-            
-            .color-dot {
-                width: 14px;
-                height: 14px;
-                margin-right: 10px;
-            }
-            
-            .alert-box {
-                margin: 10px 15px;
-                padding: 12px;
-                font-size: 0.85rem;
-            }
-            
-            .info-box { 
-                margin: 10px 15px;
-                padding: 12px;
-                font-size: 0.85rem;
-            }
-            
-            .controls { 
-                padding: 10px 15px;
-                background: white;
-                border-top: 1px solid #eee;
-            }
-            
-            .btn {
-                padding: 10px;
-                font-size: 0.9rem;
-            }
-            
-            /* Área principal ocupa o espaço restante */
-            .main-content {
-                flex: 1;
-                min-height: 50vh;
-            }
-            
-            /* Tooltip ajustado para mobile */
-            #tooltip {
-                max-width: 250px;
-                font-size: 0.85rem;
-                padding: 12px;
-            }
-            
-            #tooltip h4 {
-                font-size: 0.95rem;
-            }
+        .panel-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+        .panel-body::-webkit-scrollbar { width: 5px; }
+        .panel-body::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+        .panel-section { margin-bottom: 18px; }
+        .panel-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: var(--text-muted);
+            margin-bottom: 7px;
+            display: flex; align-items: center; gap: 6px;
         }
-        
-        /* Telas muito pequenas */
-        @media (max-width: 480px) {
-            .sidebar-header h2 {
-                font-size: 1rem;
+        .ementa-text {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #374151;
+            background: var(--bg);
+            padding: 11px 13px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .rel-list { display: flex; flex-direction: column; gap: 5px; }
+        .rel-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 10px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            font-size: 0.84rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: left;
+            background: var(--surface);
+            width: 100%;
+        }
+        .rel-item:hover { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+        .rel-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+        .rel-sem { font-size: 0.72rem; color: var(--text-muted); margin-left: auto; white-space: nowrap; }
+        .empty-rel { font-size: 0.84rem; color: var(--text-muted); font-style: italic; }
+
+        .panel-footer { padding: 14px 20px; border-top: 1px solid var(--border); flex-shrink: 0; }
+        .btn-check {
+            width: 100%; padding: 11px;
+            border-radius: 8px; border: 2px solid var(--cat-pratica);
+            background: var(--surface);
+            color: var(--cat-pratica);
+            font-size: 0.9rem; font-weight: 600;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-check:hover { background: #f0fdf4; }
+        .btn-check.checked { background: var(--cat-pratica); color: white; }
+
+        /* ═══════════════════════════ SEMESTER BADGES (canvas overlay) ═══════════════════════════ */
+        #sem-overlays {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .sem-overlay {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.9);
+            border: 1.5px solid #d1d5db;
+            border-radius: 6px;
+            padding: 3px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #374151;
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            transition: opacity 0.2s;
+        }
+        .sem-overlay.highlight { background: #dbeafe; border-color: var(--primary); color: var(--primary); }
+
+        /* ═══════════════════════════ BACKDROP ═══════════════════════════ */
+        #panel-backdrop {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.25);
+            z-index: 99;
+        }
+        #panel-backdrop.open { display: block; }
+
+        /* ═══════════════════════════ MOBILE ═══════════════════════════ */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar {
+                width: 100%; height: auto;
+                flex-direction: column;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
             }
-            
-            .stat-item {
-                font-size: 0.85rem;
-            }
-            
-            .legend-item {
-                font-size: 0.85rem;
-            }
-            
-            .btn {
-                padding: 8px;
-                font-size: 0.85rem;
-            }
+            .sidebar-scroll { max-height: 55vh; }
+            .sidebar.collapsed .sidebar-scroll { max-height: 0; overflow: hidden; }
+            .sidebar-header { cursor: pointer; }
+            .sidebar-header::after { content: '☰'; font-size: 1.1rem; float: right; }
+            .sidebar.collapsed .sidebar-header::after { content: '☰'; }
+            .sidebar:not(.collapsed) .sidebar-header::after { content: '✕'; }
+            .main-content { flex: 1; min-height: 50vh; }
+            #detail-panel { width: 100%; top: auto; bottom: 0; right: 0; height: 75vh; transform: translateY(100%); }
+            #detail-panel.open { transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR (Esquerda) -->
-    <aside class="sidebar collapsed" id="sidebar">
-        <div class="sidebar-header" onclick="toggleSidebar()">
-            <h2>Matemática</h2>
-            <h3>Licenciatura • UFMS/CPAR</h3>
+<!-- SIDEBAR -->
+<aside class="sidebar collapsed" id="sidebar">
+    <div class="sidebar-header" onclick="toggleSidebar()">
+        <div class="brand">
+            <div class="brand-icon"><i class="fas fa-project-diagram"></i></div>
+            <div>
+                <h2>Matemática — Licenciatura</h2>
+                <h3>UFMS · Campus de Paranaíba · Vigência 2026/1</h3>
+            </div>
         </div>
+    </div>
 
-        <div class="sidebar-content">
-            <div class="stats-container">
-                <div class="stat-item"><span>Carga Horária Total:</span> <strong>3.296h</strong></div>
-                <div class="stat-item"><span>Duração:</span> <strong>8 Semestres</strong></div>
-                <div class="stat-item"><span>Disciplinas totais PPC:</span> <strong>55</strong></div>
-                <div class="stat-item"><span>Vigência:</span> <strong>a partir de 2026/1</strong></div>
-                
-                <div class="stat-details">
-                    <i class="fas fa-check-circle" style="color: var(--cat-pratica)"></i> Inclui 200h de Ativ. Complementares, 236h de Extensão e 36h de Disciplinas Optativas.
-                </div>
-            </div>
+    <div class="sidebar-scroll" id="sidebar-scroll">
 
-            <div class="legend-container">
-                <div class="legend-title">Legenda (Clique para filtrar)</div>
-                <div class="legend-item" onclick="filterCategory('basica')">
-                    <div class="color-dot" style="background-color: var(--cat-basica);"></div>
-                    <span>Formação Básica</span>
+        <!-- Meu Semestre -->
+        <div class="section">
+            <div class="section-title"><i class="fas fa-calendar-alt" style="color:var(--primary)"></i> Meu Semestre Atual</div>
+            <select class="semester-select" id="my-semester" onchange="applySemesterMode()">
+                <option value="0">— Selecione seu semestre —</option>
+                <option value="1">1º Semestre</option>
+                <option value="2">2º Semestre</option>
+                <option value="3">3º Semestre</option>
+                <option value="4">4º Semestre</option>
+                <option value="5">5º Semestre</option>
+                <option value="6">6º Semestre</option>
+                <option value="7">7º Semestre</option>
+                <option value="8">8º Semestre</option>
+            </select>
+            <div class="progress-bar-wrap" id="progress-wrap">
+                <div class="progress-label">
+                    <span>Meu progresso</span>
+                    <span id="progress-text">0 / 47 disciplinas</span>
                 </div>
-                <div class="legend-item" onclick="filterCategory('especifica')">
-                    <div class="color-dot" style="background-color: var(--cat-especifica);"></div>
-                    <span>Formação Específica</span>
-                </div>
-                <div class="legend-item" onclick="filterCategory('pratica')">
-                    <div class="color-dot" style="background-color: var(--cat-pratica);"></div>
-                    <span>Dimensões Práticas</span>
-                </div>
-                <div class="legend-item" onclick="filterCategory('institucional')">
-                    <div class="color-dot" style="background-color: var(--cat-institucional);"></div>
-                    <span>Institucionais (EAD)</span>
-                </div>
-            </div>
-
-            <div class="alert-box">
-                <strong><i class="fas fa-info-circle"></i> Nota:</strong>
-                As <strong>Componentes Institucionais</strong> (amarelo) são ofertadas continuamente pela AGEAD e podem ser cursadas a qualquer momento.
-            </div>
-
-            <div class="info-box">
-                <strong>Dica:</strong><br>
-                Passe o mouse para ver detalhes. Clique em uma disciplina para destacar seus pré-requisitos (setas chegando) e as disciplinas que ela libera (setas saindo).
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
             </div>
         </div>
 
-        <div class="controls">
-            <button class="btn" onclick="resetView()"><i class="fas fa-sync-alt"></i> Restaurar</button>
-            <button class="btn btn-primary" onclick="fitGraph()"><i class="fas fa-expand"></i> Ajustar Tela</button>
+        <!-- Estatísticas -->
+        <div class="section">
+            <div class="section-title"><i class="fas fa-chart-bar" style="color:var(--primary)"></i> Dados do Curso</div>
+            <div class="stat-grid">
+                <div class="stat-card"><div class="val">3.296h</div><div class="key">Carga Horária Total</div></div>
+                <div class="stat-card"><div class="val">8 Sem.</div><div class="key">Duração Prevista</div></div>
+                <div class="stat-card"><div class="val">47</div><div class="key">Disc. Obrigatórias</div></div>
+                <div class="stat-card"><div class="val">40 vagas</div><div class="key">Por Ingresso</div></div>
+                <div class="stat-card stat-full">
+                    <div class="val" style="font-size:0.95rem;">Noturno + Sábados</div>
+                    <div class="key">Turno de Funcionamento</div>
+                </div>
+            </div>
+            <div class="stat-note">
+                <i class="fas fa-info-circle" style="color:var(--primary)"></i>
+                Inclui <strong>200h</strong> de Atividades Complementares, <strong>236h</strong> de Extensão Obrigatória e <strong>90h</strong> de Componentes Institucionais (Núcleo de Formação Cidadã).
+            </div>
         </div>
-    </aside>
 
-    <!-- AREA PRINCIPAL (Direita - Fluxograma) -->
-    <main class="main-content">
-        <div id="loading-msg">
-            <i class="fas fa-spinner fa-spin"></i> Gerando fluxograma...
+        <!-- Legenda -->
+        <div class="section">
+            <div class="section-title"><i class="fas fa-circle" style="color:var(--primary)"></i> Categorias (clique para filtrar)</div>
+            <div class="legend-item" onclick="filterCategory('basica', this)">
+                <div class="color-dot" style="background:var(--cat-basica)"></div>
+                <span>Formação Básica</span>
+                <span class="legend-count">15</span>
+            </div>
+            <div class="legend-item" onclick="filterCategory('especifica', this)">
+                <div class="color-dot" style="background:var(--cat-especifica)"></div>
+                <span>Formação Específica</span>
+                <span class="legend-count">18</span>
+            </div>
+            <div class="legend-item" onclick="filterCategory('pratica', this)">
+                <div class="color-dot" style="background:var(--cat-pratica)"></div>
+                <span>Dimensões Práticas</span>
+                <span class="legend-count">11</span>
+            </div>
+            <div class="legend-item" onclick="filterCategory('institucional', this)">
+                <div class="color-dot" style="background:var(--cat-institucional)"></div>
+                <span>Institucionais (AGEAD)</span>
+                <span class="legend-count">3</span>
+            </div>
+            <div class="legend-note">
+                <i class="fas fa-clock" style="color:#d97706"></i>
+                As <strong>Componentes Institucionais</strong> são ofertadas continuamente pela AGEAD e podem ser cursadas a qualquer momento (total: 90h).
+            </div>
         </div>
-        <div id="cy"></div>
-    </main>
 
-    <!-- TOOLTIP EXTERNO -->
-    <div id="tooltip"></div>
+        <!-- Dica -->
+        <div class="section">
+            <div class="tip-box">
+                <strong><i class="fas fa-lightbulb" style="color:#0ea5e9"></i> Como usar:</strong><br>
+                • <strong>Passe o mouse</strong> sobre uma disciplina para ver informações rápidas.<br>
+                • <strong>Clique</strong> em uma disciplina para abrir o painel completo (ementa, pré-requisitos e o que ela desbloqueia).<br>
+                • <strong>Marque</strong> as disciplinas já cursadas para acompanhar seu progresso.<br>
+                • As <strong>setas escuras</strong> indicam pré-requisito oficial.<br>
+                • Use <strong>"Meu Semestre"</strong> para destacar o que você deve matricular agora.
+            </div>
+        </div>
 
-    <!-- SCRIPT -->
-    <script>
-        // 1. DADOS
-        const COLORS = {
-            basica: '#4A90E2',
-            especifica: '#E24A4A',
-            pratica: '#4AE290',
-            institucional: '#E2B04A'
-        };
+    </div><!-- end sidebar-scroll -->
 
-        const subjects = [
-            // 1º SEMESTRE
-            { id: 's1_1', label: 'Elementos Números', full: 'Elementos para o Ensino de Números e Operações', h: 75, cat: 'basica', sem: 1 },
-            { id: 's1_2', label: 'Fund. Geometria', full: 'Fundamentos para o Ensino de Geometria, Grandezas e Medidas', h: 60, cat: 'basica', sem: 1 },
-            { id: 's1_3', label: 'Políticas Educ.', full: 'Políticas Educacionais', h: 45, cat: 'basica', sem: 1 },
-            { id: 's1_4', label: 'Prática I', full: 'Prática de Ensino de Matemática I', h: 60, cat: 'pratica', sem: 1 },
-            { id: 's1_5', label: 'Rac. Lógico', full: 'Raciocínio Lógico na Educação Básica', h: 60, cat: 'basica', sem: 1 },
+    <div class="controls">
+        <button class="btn btn-danger" onclick="clearProgress()" title="Apagar progresso marcado">
+            <i class="fas fa-trash-alt"></i> Limpar
+        </button>
+        <button class="btn" onclick="resetView()">
+            <i class="fas fa-undo"></i> Resetar
+        </button>
+        <button class="btn btn-primary" onclick="fitGraph()">
+            <i class="fas fa-expand-arrows-alt"></i> Ajustar
+        </button>
+    </div>
+</aside>
 
-            // 2º SEMESTRE
-            { id: 's2_1', label: 'Álgebra Básica', full: 'Álgebra na Educação Básica', h: 60, cat: 'basica', sem: 2 },
-            { id: 's2_2', label: 'Prob. e Est.', full: 'Conceitos para o Ensino de Probabilidade e Estatística', h: 60, cat: 'basica', sem: 2 },
-            { id: 's2_3', label: 'Fund. Didática', full: 'Fundamentos de Didática', h: 45, cat: 'basica', sem: 2, important: true },
-            { id: 's2_4', label: 'Ensino Funções', full: 'Fundamentos e Metodologias para o Ensino de Funções', h: 75, cat: 'basica', sem: 2 },
-            { id: 's2_5', label: 'Prática II', full: 'Prática de Ensino de Matemática II', h: 60, cat: 'pratica', sem: 2 },
+<!-- CANVAS -->
+<main class="main-content">
+    <div id="loading-msg"><i class="fas fa-spinner fa-spin"></i> Gerando fluxograma...</div>
+    <div id="cy"></div>
+    <div id="sem-overlays"></div>
+</main>
 
-            // 3º SEMESTRE
-            { id: 's3_1', label: 'Cálculo I', full: 'Cálculo I', h: 60, cat: 'especifica', sem: 3, important: true },
-            { id: 's3_2', label: 'Geo. Analítica I', full: 'Geometria Analítica I', h: 60, cat: 'especifica', sem: 3, important: true },
-            { id: 's3_3', label: 'Leit. e Prod. Texto', full: 'Leitura e Produção de Textos', h: 60, cat: 'basica', sem: 3 },
-            { id: 's3_4', label: 'Lógica Mat.', full: 'Lógica Matemática', h: 60, cat: 'especifica', sem: 3 },
-            { id: 's3_5', label: 'Psicologia Educ.', full: 'Psicologia e Educação', h: 45, cat: 'basica', sem: 3 },
+<!-- TOOLTIP (hover) -->
+<div id="tooltip"></div>
 
-            // 4º SEMESTRE
-            { id: 's4_1', label: 'Cálculo II', full: 'Cálculo II', h: 60, cat: 'especifica', sem: 4, important: true },
-            { id: 's4_2', label: 'Ed. Especial', full: 'Educação Especial', h: 45, cat: 'basica', sem: 4 },
-            { id: 's4_3', label: 'Geo. Analítica II', full: 'Geometria Analítica II', h: 60, cat: 'especifica', sem: 4 },
-            { id: 's4_4', label: 'Prob. Est. I', full: 'Probabilidade e Estatística I', h: 60, cat: 'especifica', sem: 4 },
-            { id: 's4_5', label: 'Tec. Digital', full: 'Tecnologias Digitais e o Ensino de Matemática', h: 60, cat: 'especifica', sem: 4 },
+<!-- BACKDROP -->
+<div id="panel-backdrop" onclick="closePanel()"></div>
 
-            // 5º SEMESTRE
-            { id: 's5_1', label: 'Álgebra I', full: 'Álgebra I', h: 60, cat: 'especifica', sem: 5 },
-            { id: 's5_2', label: 'Álgebra Linear I', full: 'Álgebra Linear I', h: 60, cat: 'especifica', sem: 5 },
-            { id: 's5_3', label: 'Cálculo III', full: 'Cálculo III', h: 60, cat: 'especifica', sem: 5, important: true },
-            { id: 's5_4', label: 'Estágio I', full: 'Estágio Obrigatório I', h: 100, cat: 'pratica', sem: 5, important: true },
-            { id: 's5_5', label: 'Prática III', full: 'Prática de Ensino em Matemática III', h: 60, cat: 'pratica', sem: 5 },
-            { id: 's5_6', label: 'Prob. Est. II', full: 'Probabilidade e Estatística II', h: 60, cat: 'especifica', sem: 5 },
+<!-- DETAIL PANEL (click) -->
+<div id="detail-panel">
+    <div class="panel-header">
+        <div class="panel-header-top">
+            <h2 class="panel-title" id="panel-title">—</h2>
+            <button class="panel-close" onclick="closePanel()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="panel-badges" id="panel-badges"></div>
+    </div>
+    <div class="panel-body">
+        <div class="panel-section" id="panel-ementa-sec">
+            <div class="panel-section-title"><i class="fas fa-book-open"></i> Ementa</div>
+            <div class="ementa-text" id="panel-ementa">—</div>
+        </div>
+        <div class="panel-section" id="panel-prereq-sec">
+            <div class="panel-section-title"><i class="fas fa-arrow-right" style="color:#dc2626"></i> Pré-Requisitos Obrigatórios</div>
+            <div class="rel-list" id="panel-prereqs"></div>
+        </div>
+        <div class="panel-section" id="panel-unlocks-sec">
+            <div class="panel-section-title"><i class="fas fa-unlock" style="color:#15803d"></i> Disciplinas que esta libera</div>
+            <div class="rel-list" id="panel-unlocks"></div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn-check" id="btn-check" onclick="toggleCompleted()">
+            <i class="fas fa-check-circle"></i> Marcar como Cursada
+        </button>
+    </div>
+</div>
 
-            // 6º SEMESTRE
-            { id: 's6_1', label: 'Álgebra II', full: 'Álgebra II', h: 60, cat: 'especifica', sem: 6 },
-            { id: 's6_2', label: 'Álgebra Linear II', full: 'Álgebra Linear II', h: 60, cat: 'especifica', sem: 6 },
-            { id: 's6_3', label: 'Cálculo IV', full: 'Cálculo IV', h: 60, cat: 'especifica', sem: 6 },
-            { id: 's6_4', label: 'Estágio II', full: 'Estágio Obrigatório II', h: 100, cat: 'pratica', sem: 6 },
-            { id: 's6_5', label: 'Lab. Ensino', full: 'Laboratório de Ensino de Matemática', h: 60, cat: 'pratica', sem: 6 },
-            { id: 's6_6', label: 'Prática IV', full: 'Prática de Ensino em Matemática IV', h: 60, cat: 'pratica', sem: 6 },
+<script>
+// ═══════════════════════════════════════════════════
+// 1. DADOS — DISCIPLINAS
+// ═══════════════════════════════════════════════════
+const COLORS = {
+    basica:       '#1D4ED8',
+    especifica:   '#B91C1C',
+    pratica:      '#15803D',
+    institucional:'#B45309'
+};
 
-            // 7º SEMESTRE
-            { id: 's7_1', label: 'Desenv. Prof. Doc.', full: 'Desenvolvimento Profissional Docente', h: 30, cat: 'basica', sem: 7 },
-            { id: 's7_2', label: 'Estágio III', full: 'Estágio Obrigatório III', h: 100, cat: 'pratica', sem: 7 },
-            { id: 's7_3', label: 'Intro. Análise Real', full: 'Introdução à Análise Real', h: 60, cat: 'especifica', sem: 7 },
-            { id: 's7_4', label: 'Met. Pesq. Educ.', full: 'Metodologia de Pesquisa Educacional', h: 60, cat: 'especifica', sem: 7 },
-            { id: 's7_5', label: 'Org. Curricular', full: 'Organização Curricular e Gestão da Escola', h: 60, cat: 'basica', sem: 7 },
-            { id: 's7_6', label: 'Prática V', full: 'Prática de Ensino em Matemática V', h: 60, cat: 'pratica', sem: 7 },
-            { id: 's7_7', label: 'Tendências Ed. Mat.', full: 'Tendências em Educação Matemática', h: 60, cat: 'especifica', sem: 7 },
+const CAT_LABELS = {
+    basica: 'Formação Básica',
+    especifica: 'Formação Específica',
+    pratica: 'Dimensões Práticas',
+    institucional: 'Institucional (AGEAD)'
+};
 
-            // 8º SEMESTRE
-            { id: 's8_1', label: 'Estágio IV', full: 'Estágio Obrigatório IV', h: 100, cat: 'pratica', sem: 8 },
-            { id: 's8_2', label: 'Estudo de Libras', full: 'Estudo de Libras', h: 45, cat: 'basica', sem: 8 },
-            { id: 's8_3', label: 'Fund. Hist. Soc.', full: 'Fundamentos Históricos, Sociológicos e Filosóficos da Educação', h: 45, cat: 'basica', sem: 8 },
-            { id: 's8_4', label: 'Geo. Euclidiana', full: 'Geometria Euclidiana', h: 60, cat: 'especifica', sem: 8 },
-            { id: 's8_5', label: 'Hist. Matemática', full: 'História da Matemática', h: 60, cat: 'especifica', sem: 8 },
-            { id: 's8_6', label: 'Prática VI', full: 'Prática de Ensino em Matemática VI', h: 60, cat: 'pratica', sem: 8 },
+const SEM_CH = { 1:300, 2:300, 3:285, 4:285, 5:400, 6:400, 7:430, 8:370, 9:90 };
 
-            // COMPONENTES INSTITUCIONAIS (Semestre 9 - Flexível)
-            { id: 'i1', label: 'Empreendedorismo', full: 'Empreendedorismo e Inovação', h: 30, cat: 'institucional', sem: 9 },
-            { id: 'i2', label: 'I.A. Fundamentos', full: 'Inteligência Artificial: Fundamentos e Práticas', h: 30, cat: 'institucional', sem: 9 },
-            { id: 'i3', label: 'Vida e Cidadania', full: 'Vida, Cidadania e Sustentabilidade', h: 30, cat: 'institucional', sem: 9 }
-        ];
+const subjects = [
+    // ── 1º SEMESTRE ──
+    { id:'s1_1', label:'Elem. Números e Operações', full:'Elementos para o Ensino de Números e Operações', h:75, cat:'basica', sem:1,
+      ementa:'Ensino e aprendizagem dos objetos de conhecimento relacionados a números e operações previstos para a educação básica e na BNCC: operações básicas e suas propriedades nos conjuntos dos números naturais e dos números inteiros; frações; operações com números racionais; potenciação e radiciação; expressões numéricas; porcentagem, acréscimo e decréscimo simples; múltiplos e divisores; divisão euclidiana; máximo divisor comum e mínimo múltiplo comum; números primos; sistemas de numeração. Metodologias para o ensino de Números e Operações.' },
+    { id:'s1_2', label:'Fund. Geometria e Medidas', full:'Fundamentos para o Ensino de Geometria, Grandezas e Medidas', h:60, cat:'basica', sem:1,
+      ementa:'Ensino e aprendizagem dos objetos de conhecimento relacionados à geometria, grandezas e medidas previstos para a educação básica e na BNCC: Plano e reta; comprimento; figuras geométricas planas; áreas; semelhança e áreas; sólidos geométricos; volume. Metodologias para o ensino de geometria, grandezas e medidas.' },
+    { id:'s1_3', label:'Políticas Educacionais', full:'Políticas Educacionais', h:45, cat:'basica', sem:1,
+      ementa:'Gênese e concepção das políticas no Brasil. Direitos sociais: direitos humanos e fundamentais. Estado, sociedade e políticas para a educação básica. Organização dos sistemas de ensino. Financiamento da educação em seus diferentes níveis e modalidades. Determinantes do desempenho educacional brasileiro. Políticas educacionais contemporâneas no âmbito municipal, estadual e nacional.' },
+    { id:'s1_4', label:'Prática de Ensino I', full:'Prática de Ensino de Matemática I', h:60, cat:'pratica', sem:1,
+      ementa:'Introdução às metodologias de ensino. Análise didática e prática de ensino de conteúdos de matemática relativos à teoria de matrizes, cálculo de determinante e resolução de sistemas lineares. Interpretação e resolução de problemas apresentados em livros didáticos. Discussão acerca dos conteúdos de matemática relativos ao Ensino Fundamental e/ou Médio e as possíveis relações com temas como: Ética, Orientação Sexual, Meio Ambiente, Pluralidade Cultural, Trabalho e Consumo, Educação Ambiental e Direitos Humanos.' },
+    { id:'s1_5', label:'Raciocínio Lógico', full:'Raciocínio Lógico na Educação Básica', h:60, cat:'basica', sem:1,
+      ementa:'Proposições e raciocínio dedutivo e indutivo. Fundamentos do raciocínio lógico-matemático e suas aplicações no contexto do ensino básico. Estratégias de resolução de problemas lógicos. Articulação com a BNCC.' },
 
-        const prerequisites = [
-            { source: 's3_1', target: 's4_1' }, 
-            { source: 's4_1', target: 's5_3' }, 
-            { source: 's5_3', target: 's6_3' }, 
-            { source: 's3_2', target: 's4_3' }, 
-            { source: 's2_3', target: 's5_4' }, 
-            { source: 's4_1', target: 's8_5', type: 'soft' } // Recomendação
-        ];
+    // ── 2º SEMESTRE ──
+    { id:'s2_1', label:'Álgebra na Ed. Básica', full:'Álgebra na Educação Básica', h:60, cat:'basica', sem:2,
+      ementa:'Ensino e aprendizagem dos objetos de conhecimento relacionados à álgebra previstos para a educação básica e na BNCC: sequências e princípio de indução; expressões algébricas; produtos notáveis e fatoração; frações algébricas; proporcionalidade e problemas envolvendo grandezas diretamente proporcionais e grandezas inversamente proporcionais; equações de 1º e 2º grau. Metodologias para o ensino de Álgebra.' },
+    { id:'s2_2', label:'Conc. Prob. e Estatística', full:'Conceitos para o Ensino de Probabilidade e Estatística', h:60, cat:'basica', sem:2,
+      ementa:'Articulação da teoria e da prática em torno dos temas de Probabilidade e Estatística em uma perspectiva reflexiva, buscando construir uma atitude crítica do professor em formação, por meio da análise de atividades desenvolvidas para a Educação Básica. Variáveis quantitativas e qualitativas, construção de tabelas de frequência, medidas de tendência central, construção de gráficos, princípios de contagem, combinações, permutações, princípio da inclusão-exclusão, espaço amostral, probabilidade de Laplace, probabilidades condicionais e uso de planilhas eletrônicas.' },
+    { id:'s2_3', label:'Fundamentos de Didática', full:'Fundamentos de Didática', h:45, cat:'basica', sem:2,
+      ementa:'Bases epistemológicas e históricas da didática. Didática na formação docente. Organização do trabalho e das relações pedagógicas no espaço escolar. Planejamento: projeto pedagógico da escola, plano de ensino e plano de aula. Identificação e análise de estratégias de ensino, da natureza dos conteúdos e das formas de avaliação.' },
+    { id:'s2_4', label:'Fund. e Met. Ensino Funções', full:'Fundamentos e Metodologias para o Ensino de Funções', h:75, cat:'basica', sem:2,
+      ementa:'Ensino e aprendizagem dos objetos de conhecimento relacionados a funções previstos para a educação básica e na BNCC: Equações, inequações, ideia intuitiva e definição de função; domínio, imagem, contradomínio e gráfico de uma função; paridade e periodicidade de funções; monotonicidade de funções; funções injetiva, sobrejetiva e bijetiva, composição de funções; função inversa; funções elementares. Metodologias e tecnologias digitais para o ensino de funções.' },
+    { id:'s2_5', label:'Prática de Ensino II', full:'Prática de Ensino de Matemática II', h:60, cat:'pratica', sem:2,
+      ementa:'Utilizar algumas metodologias de ensino frente à temática de grandezas e medidas no estudo da trigonometria. Análise didática e prática de ensino de conteúdos de matemática relativo às relações trigonométricas e os possíveis diálogos com temas como: Ética, Orientação Sexual, Meio Ambiente, Pluralidade Cultural, Trabalho e Consumo, Educação Ambiental e Direitos Humanos.' },
 
-        // --- 2. FUNÇÃO DE LAYOUT MANUAL (GRID CENTRALIZADO) ---
-        function calculateManualPositions() {
-            const positions = {};
-            const semesterHeight = 160; 
-            const startY = 80;         
-            const nodeWidth = 180; // LARGURA DOS NODES
-            const gap = 30;             
-            
-            // Agrupar por semestre
-            const semGroups = {};
-            subjects.forEach(sub => {
-                if(!semGroups[sub.sem]) semGroups[sub.sem] = [];
-                semGroups[sub.sem].push(sub.id);
-            });
+    // ── 3º SEMESTRE ──
+    { id:'s3_1', label:'Cálculo I', full:'Cálculo I', h:60, cat:'especifica', sem:3,
+      ementa:'Números reais e funções de uma variável real a valores reais; Limite e continuidade de função de uma variável real; Derivadas de função de uma variável real.' },
+    { id:'s3_2', label:'Geometria Analítica I', full:'Geometria Analítica I', h:60, cat:'especifica', sem:3,
+      ementa:'Plano cartesiano. Vetores. Retas. Planos. Posição relativa. Distância. Discussão de valores, atitudes e práticas sociais que expressem a cultura dos direitos humanos e da educação ambiental.' },
+    { id:'s3_3', label:'Leitura e Produção de Textos', full:'Leitura e Produção de Textos', h:60, cat:'basica', sem:3,
+      ementa:'Conceitos de linguagem, língua, texto e leitura. Gêneros textuais e tipologias textuais. Contexto. Construção dos sentidos do texto. Critérios de textualidade. Gêneros textuais acadêmicos (orais e escritos).' },
+    { id:'s3_4', label:'Lógica Matemática', full:'Lógica Matemática', h:60, cat:'especifica', sem:3,
+      ementa:'Proposições e fórmulas proposicionais. Implicação e Equivalência Lógica. Método dedutivo. Quantificadores. Técnicas de demonstração. Noções de conjuntos.' },
+    { id:'s3_5', label:'Psicologia e Educação', full:'Psicologia e Educação', h:45, cat:'basica', sem:3,
+      ementa:'Desenvolvimento humano e aprendizagem. Teorias do desenvolvimento cognitivo. Relações entre Psicologia e Educação. Aspectos psicológicos do processo de ensino-aprendizagem. Motivação e aprendizagem escolar.' },
 
-            // Largura virtual da tela aumentada para centralizar linhas mais largas
-            const canvasWidth = 2000; 
+    // ── 4º SEMESTRE ──
+    { id:'s4_1', label:'Cálculo II', full:'Cálculo II', h:60, cat:'especifica', sem:4,
+      ementa:'Integral de Riemann. Aplicações da Integral Definida.' },
+    { id:'s4_2', label:'Educação Especial', full:'Educação Especial', h:45, cat:'basica', sem:4,
+      ementa:'Contextualização da evolução histórica e dos direitos humanos da Educação Especial. A Educação Especial e as políticas públicas. O público-alvo da Educação Especial. A Educação Especial no contexto da educação inclusiva e as práticas pedagógicas.' },
+    { id:'s4_3', label:'Geometria Analítica II', full:'Geometria Analítica II', h:60, cat:'especifica', sem:4,
+      ementa:'Cônicas e Quádricas.' },
+    { id:'s4_4', label:'Probabilidade e Estat. I', full:'Probabilidade e Estatística I', h:60, cat:'especifica', sem:4,
+      ementa:'Probabilidade e Estatística em nível superior. Espaços de probabilidade. Variáveis aleatórias. Distribuições de probabilidade discretas e contínuas. Inferência estatística básica.' },
+    { id:'s4_5', label:'Tecnologias Dig. e Ensino Mat.', full:'Tecnologias Digitais e o Ensino de Matemática', h:60, cat:'especifica', sem:4,
+      ementa:'Estudo e uso de tecnologias digitais no ensino de Matemática. Softwares educacionais (GeoGebra, planilhas eletrônicas, etc.), ambientes virtuais e ferramentas digitais aplicadas à prática pedagógica matemática.' },
 
-            for(let sem = 1; sem <= 9; sem++) {
-                const nodes = semGroups[sem] || [];
-                const rowWidth = (nodes.length * nodeWidth) + ((nodes.length - 1) * gap);
-                const startX = (canvasWidth - rowWidth) / 2; // Centralizar
+    // ── 5º SEMESTRE ──
+    { id:'s5_1', label:'Álgebra I', full:'Álgebra I', h:60, cat:'especifica', sem:5,
+      ementa:'Números Inteiros. Relações, Aplicações, Operações, Equações Diofantinas, Congruência Módulo n.' },
+    { id:'s5_2', label:'Álgebra Linear I', full:'Álgebra Linear I', h:60, cat:'especifica', sem:5,
+      ementa:'Espaços Vetoriais. Combinação Linear. Base. Transformações Lineares.' },
+    { id:'s5_3', label:'Cálculo III', full:'Cálculo III', h:60, cat:'especifica', sem:5,
+      ementa:'Funções reais de várias variáveis reais. Gráfico de função de várias variáveis reais. Diferenciação. Gradiente e Derivadas direcionais. Máximos e mínimos.' },
+    { id:'s5_4', label:'Estágio Obrigatório I', full:'Estágio Obrigatório I', h:100, cat:'pratica', sem:5,
+      ementa:'Observação, análise e vivência do contexto escolar e do ambiente de sala de aula de Ensino Fundamental. Participação em aulas de matemática nos anos finais do Ensino Fundamental (preferencialmente 6º e 7º anos). Planejamento, desenvolvimento e avaliação de aulas de matemática (regência, reforço escolar, projetos) nos anos finais do Ensino Fundamental. Afirmação de valores, atitudes e práticas sociais que expressem a cultura dos direitos humanos, da educação ambiental, das relações étnico-raciais e de gênero.' },
+    { id:'s5_5', label:'Prática de Ensino III', full:'Prática de Ensino em Matemática III', h:60, cat:'pratica', sem:5,
+      ementa:'Introdução às metodologias de ensino e as tendências em Educação Matemática. Análise didática e prática de ensino de temas da Matemática relativos ao Ensino Fundamental e/ou Médio e as possíveis relações com os temas transversais Ciências e Tecnologia, Cidadania e Civismo, Meio Ambiente, Economia, Saúde e Multiculturalismo.' },
+    { id:'s5_6', label:'Probabilidade e Estat. II', full:'Probabilidade e Estatística II', h:60, cat:'especifica', sem:5,
+      ementa:'Probabilidade e estatística em nível avançado. Variáveis aleatórias multidimensionais, funções de variáveis aleatórias, teorema do limite central e suas aplicações.' },
 
-                nodes.forEach((nodeId, idx) => {
-                    positions[nodeId] = {
-                        x: startX + (idx * (nodeWidth + gap)),
-                        y: startY + ((sem-1) * semesterHeight) 
-                    };
-                });
-            }
-            return positions;
-        }
+    // ── 6º SEMESTRE ──
+    { id:'s6_1', label:'Álgebra II', full:'Álgebra II', h:60, cat:'especifica', sem:6,
+      ementa:'Grupos. Anéis. Corpos.' },
+    { id:'s6_2', label:'Álgebra Linear II', full:'Álgebra Linear II', h:60, cat:'especifica', sem:6,
+      ementa:'Autovalores e autovetores. Diagonalização. Produto interno.' },
+    { id:'s6_3', label:'Cálculo IV', full:'Cálculo IV', h:60, cat:'especifica', sem:6,
+      ementa:'Curvas paramétricas e Funções vetoriais. Integrais Múltiplas. Integral de linha. Integral de Superfície.' },
+    { id:'s6_4', label:'Estágio Obrigatório II', full:'Estágio Obrigatório II', h:100, cat:'pratica', sem:6,
+      ementa:'Observação, análise e vivência do contexto escolar e do ambiente de sala de aula de Ensino Fundamental. Participação em aulas de matemática nos anos finais do Ensino Fundamental (preferencialmente 8º e 9º anos). Planejamento, desenvolvimento (regência supervisionada de aulas) e avaliação de aulas de matemática nos anos finais do Ensino Fundamental.' },
+    { id:'s6_5', label:'Laboratório de Ensino Mat.', full:'Laboratório de Ensino de Matemática', h:60, cat:'pratica', sem:6,
+      ementa:'Análise e produção de material didático para o ensino da matemática. Jogos e recreações matemáticas. Análise de livro didático e software educativo de Matemática.' },
+    { id:'s6_6', label:'Prática de Ensino IV', full:'Prática de Ensino em Matemática IV', h:60, cat:'pratica', sem:6,
+      ementa:'Discutir as tendências da Educação Matemática "Resolução de Problemas" e "História da Matemática", visando estudo e produção de materiais ligados à prática de ensino de temas do Ensino Básico. Análise didática e prática de ensino de temas da Matemática relativos ao Ensino Fundamental e/ou Médio e as possíveis relações com os temas transversais.' },
 
-        const elements = {
-            nodes: subjects.map(sub => ({
+    // ── 7º SEMESTRE ──
+    { id:'s7_1', label:'Desenv. Prof. Docente', full:'Desenvolvimento Profissional Docente', h:30, cat:'basica', sem:7,
+      ementa:'Desenvolvimento profissional: percursos teóricos e perspectivas. Desenvolvimento pessoal, interpessoal e intrapessoal. Engajamento profissional, pessoal e coletivo. Formação contínua e espaços formativos para o exercício profissional. Gestão de ambientes de aprendizagem. Discussão de valores, atitudes e práticas sociais que expressem a cultura dos direitos humanos, da educação ambiental, das relações étnico-raciais e de gênero em sala de aula e em todos os espaços da sociedade.' },
+    { id:'s7_2', label:'Estágio Obrigatório III', full:'Estágio Obrigatório III', h:100, cat:'pratica', sem:7,
+      ementa:'Observação, análise e vivência do contexto escolar e do ambiente de sala de aula de Ensino Médio. Participação em aulas de matemática em turmas de Ensino Médio. Planejamento, desenvolvimento e avaliação de aulas de matemática no Ensino Médio. Discussão de valores, atitudes e práticas sociais que expressem os direitos humanos, a educação ambiental, as relações étnico-raciais e de gênero.' },
+    { id:'s7_3', label:'Introdução à Análise Real', full:'Introdução à Análise Real', h:60, cat:'especifica', sem:7,
+      ementa:'Números reais. Sequências e Séries. Topologia da reta. Limites de funções. Funções contínuas.' },
+    { id:'s7_4', label:'Met. de Pesq. Educacional', full:'Metodologia de Pesquisa Educacional', h:60, cat:'especifica', sem:7,
+      ementa:'Metodologias da pesquisa em Educação. Temáticas da pesquisa em Educação Matemática. Perspectivas metodológicas: pesquisas qualitativas e quantitativas.' },
+    { id:'s7_5', label:'Org. Curricular e Gestão', full:'Organização Curricular e Gestão da Escola', h:60, cat:'basica', sem:7,
+      ementa:'A produção teórica sobre currículo e gestão escolar no Brasil. Políticas e práticas de currículo e gestão. O currículo como organização geral da escola. Os níveis formais e reais da organização curricular. As orientações curriculares do Ensino Fundamental e Médio. A gestão democrática e o Projeto Político Pedagógico. Identidade, diversidade e diferença no currículo e na gestão da escola.' },
+    { id:'s7_6', label:'Prática de Ensino V', full:'Prática de Ensino em Matemática V', h:60, cat:'pratica', sem:7,
+      ementa:'Tendências em Educação Matemática e suas implicações para a prática de ensino. Análise e produção de recursos pedagógicos voltados a temas transversais e à realidade do estudante.' },
+    { id:'s7_7', label:'Tendências em Ed. Mat.', full:'Tendências em Educação Matemática', h:60, cat:'especifica', sem:7,
+      ementa:'Estudo e discussão das principais tendências em Educação Matemática: Modelagem Matemática, Etnomatemática, Resolução de Problemas, Tecnologia e Informática na Educação Matemática, História da Matemática e Educação Matemática Crítica.' },
+
+    // ── 8º SEMESTRE ──
+    { id:'s8_1', label:'Estágio Obrigatório IV', full:'Estágio Obrigatório IV', h:100, cat:'pratica', sem:8,
+      ementa:'Atuação em gestão escolar ou no ensino médio nas etapas de formação geral básica (Matemática) ou itinerário formativo: aprofundamento em área de conhecimento (eletiva e unidades curriculares) e núcleo integrador (intervenção comunitária, matemática criativa, projeto de vida). Discussão de valores, atitudes e práticas sociais que expressem os direitos humanos, a educação ambiental, as relações étnico-raciais e de gênero.' },
+    { id:'s8_2', label:'Estudo de Libras', full:'Estudo de Libras', h:45, cat:'basica', sem:8,
+      ementa:'Fundamentos epistemológicos, históricos, políticos e culturais da Língua Brasileira de Sinais (Libras). A pessoa surda e suas singularidades linguísticas. Desenvolvimento cognitivo e linguístico e a aquisição da primeira e segunda língua. Aspectos discursivos e seus impactos na interpretação. O papel do professor e do intérprete de língua de sinais na escola inclusiva. Introdução ao estudo da Língua Brasileira de Sinais: noções básicas de fonologia, de morfologia e de sintaxe.' },
+    { id:'s8_3', label:'Fund. Hist., Soc. e Filos.', full:'Fundamentos Históricos, Sociológicos e Filosóficos da Educação', h:45, cat:'basica', sem:8,
+      ementa:'Fontes histórico-filosóficas-sociológicas e pesquisa do mundo grego arcaico e clássico. A formação da sociedade e dos valores do mundo antigo. Educação grega: período arcaico e período clássico. Educação romana: a educação familiar fundamental, as escolas romanas de ensino secundário e as escolas cristãs.' },
+    { id:'s8_4', label:'Geometria Euclidiana', full:'Geometria Euclidiana', h:60, cat:'especifica', sem:8,
+      ementa:'Tópicos da história da geometria. Conceitos primitivos. Estudo axiomático da geometria plana.' },
+    { id:'s8_5', label:'História da Matemática', full:'História da Matemática', h:60, cat:'especifica', sem:8,
+      ementa:'Origens da Matemática. A matemática nas antigas civilizações (sistemas de numeração, operações básicas, geometria). A matemática na idade média: oriente x ocidente. A matemática no Renascimento (o cálculo e a geometria analítica). A História da Matemática no Brasil. A matemática nos séculos XIX e XX: as correntes filosóficas da matemática e a crise da matemática.' },
+    { id:'s8_6', label:'Prática de Ensino VI', full:'Prática de Ensino em Matemática VI', h:60, cat:'pratica', sem:8,
+      ementa:'Análise e avaliação crítica de práticas pedagógicas em Matemática. Produção de trabalho final de curso integrando teoria e prática. Reflexão sobre a trajetória formativa e a identidade docente.' },
+
+    // ── COMPONENTES INSTITUCIONAIS ──
+    { id:'i1', label:'Empreendedorismo e Inovação', full:'Empreendedorismo e Inovação', h:30, cat:'institucional', sem:9,
+      ementa:'Perfil empreendedor. O papel do empreendedor na sociedade. Motivação. Estabelecimento de metas. Ideias e oportunidades. Inovação. Técnicas e Ferramentas de planejamento e validação de negócios inovadores. Modelagem e Startups.' },
+    { id:'i2', label:'IA: Fundamentos e Práticas', full:'Inteligência Artificial: Fundamentos e Práticas', h:30, cat:'institucional', sem:9,
+      ementa:'Introdução à Inteligência Artificial (IA): conceitos, histórico e evolução. A IA como ferramenta de apoio à resolução de problemas, inovação e tomada de decisão em diferentes áreas. Aplicações interdisciplinares da IA na educação, na vida cotidiana, na saúde, no meio ambiente e nos direitos humanos. Reflexão crítica sobre ética, cidadania digital, inovação responsável e os impactos sociais, culturais, econômicos e ambientais da IA.' },
+    { id:'i3', label:'Vida, Cidadania e Sustent.', full:'Vida, Cidadania e Sustentabilidade', h:30, cat:'institucional', sem:9,
+      ementa:'Estudo da vida, cidadania e sustentabilidade em uma perspectiva interdisciplinar. Dimensões da sustentabilidade: econômica, social e ambiental. Cidadania ativa e responsabilidade social. Desenvolvimento sustentável e seus desafios contemporâneos.' },
+];
+
+// Pré-requisitos OFICIAIS do PPC (páginas 32-33)
+const prerequisites = [
+    { source:'s3_1', target:'s4_1' },  // Cálculo I → Cálculo II
+    { source:'s3_2', target:'s4_3' },  // Geo. Analítica I → Geo. Analítica II
+    { source:'s4_1', target:'s5_3' },  // Cálculo II → Cálculo III
+    { source:'s2_3', target:'s5_4' },  // Fund. Didática → Estágio I
+    { source:'s5_3', target:'s6_3' },  // Cálculo III → Cálculo IV
+    { source:'s4_1', target:'s8_5' },  // Cálculo II → História da Matemática (OBRIGATÓRIO)
+];
+
+// ═══════════════════════════════════════════════════
+// 2. PROGRESSO (localStorage)
+// ═══════════════════════════════════════════════════
+const STORAGE_KEY = 'fluxograma_ufms_cpar_2026';
+
+function loadCompleted() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function saveCompleted(arr) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+
+let completed = loadCompleted();
+
+function updateProgressBar() {
+    const total = subjects.filter(s => s.sem <= 8).length; // 47 discip. obrigatórias (sem institucionais)
+    const done  = completed.filter(id => subjects.find(s => s.id === id && s.sem <= 8)).length;
+    document.getElementById('progress-text').textContent = `${done} / ${total} disciplinas`;
+    document.getElementById('progress-fill').style.width = `${Math.round((done/total)*100)}%`;
+}
+
+// ═══════════════════════════════════════════════════
+// 3. LAYOUT
+// ═══════════════════════════════════════════════════
+function calculatePositions() {
+    const positions = {};
+    const nodeW    = 190;
+    const nodeGap  = 28;
+    const semH     = 155;
+    const startY   = 90;
+    const canvasW  = 2100;
+
+    const semGroups = {};
+    subjects.forEach(s => {
+        if (!semGroups[s.sem]) semGroups[s.sem] = [];
+        semGroups[s.sem].push(s.id);
+    });
+
+    for (let sem = 1; sem <= 9; sem++) {
+        const nodes = semGroups[sem] || [];
+        const rowW  = nodes.length * nodeW + (nodes.length - 1) * nodeGap;
+        const startX = (canvasW - rowW) / 2;
+        nodes.forEach((id, i) => {
+            positions[id] = {
+                x: startX + i * (nodeW + nodeGap),
+                y: startY + (sem - 1) * semH
+            };
+        });
+    }
+    return { positions, semGroups };
+}
+
+// ═══════════════════════════════════════════════════
+// 4. INICIALIZAÇÃO DO CYTOSCAPE
+// ═══════════════════════════════════════════════════
+let cy;
+let currentNode = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof cytoscape === 'undefined') {
+        document.getElementById('loading-msg').innerHTML =
+            "<span style='color:#dc2626'><i class='fas fa-exclamation-triangle'></i> Erro: biblioteca não carregou. Verifique sua conexão.</span>";
+        return;
+    }
+
+    const { positions, semGroups } = calculatePositions();
+
+    // Criar label-nodes para os semestres
+    const semLabelNodes = [];
+    const SEM_LABELS = {
+        1:'1º Semestre — 300h', 2:'2º Semestre — 300h',
+        3:'3º Semestre — 285h', 4:'4º Semestre — 285h',
+        5:'5º Semestre — 400h', 6:'6º Semestre — 400h',
+        7:'7º Semestre — 430h', 8:'8º Semestre — 370h',
+        9:'Institucionais (AGEAD) — 90h'
+    };
+
+    for (let sem = 1; sem <= 9; sem++) {
+        const nodes = semGroups[sem] || [];
+        if (!nodes.length) continue;
+        const xs = nodes.map(id => positions[id].x);
+        const centerX = (Math.min(...xs) + Math.max(...xs)) / 2;
+        const y = positions[nodes[0]].y;
+        semLabelNodes.push({
+            data: { id: `lbl_sem_${sem}`, label: SEM_LABELS[sem], isLabel: true, sem },
+            position: { x: centerX, y: y - 52 }
+        });
+    }
+
+    const elements = {
+        nodes: [
+            ...semLabelNodes,
+            ...subjects.map(s => ({
                 data: {
-                    id: sub.id,
-                    label: sub.label,
-                    full: sub.full,
-                    hours: sub.h,
-                    category: sub.cat,
-                    semester: sub.sem,
-                    color: COLORS[sub.cat]
-                }
-            })),
-            edges: prerequisites.map((preq, index) => ({
-                data: {
-                    id: `edge_${index}`,
-                    source: preq.source,
-                    target: preq.target,
-                    isPrerequisite: true,
-                    type: preq.type || 'hard'
+                    id: s.id, label: s.label, full: s.full,
+                    hours: s.h, category: s.cat, semester: s.sem,
+                    ementa: s.ementa, color: COLORS[s.cat], isLabel: false
                 }
             }))
-        };
+        ],
+        edges: prerequisites.map((p, i) => ({
+            data: { id: `e${i}`, source: p.source, target: p.target }
+        }))
+    };
 
-        // --- 3. INICIALIZAÇÃO ---
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof cytoscape === 'undefined') {
-                document.getElementById('loading-msg').innerHTML = "<h3 style='color:red'>Erro: Biblioteca não carregou. Verifique sua conexão.</h3>";
-                return;
-            }
+    cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements,
+        style: [
+            // Label nodes (semester headers)
+            { selector: 'node[?isLabel]', style: {
+                'background-opacity': 0, 'border-width': 0,
+                'label': 'data(label)',
+                'color': '#374151', 'font-size': '13px', 'font-weight': '700',
+                'text-valign': 'center', 'text-halign': 'center',
+                'width': 260, 'height': 24,
+                'events': 'no',
+                'text-background-color': '#fff',
+                'text-background-opacity': 0.85,
+                'text-background-padding': '5px',
+                'text-background-shape': 'roundrectangle'
+            }},
+            // Regular nodes
+            { selector: 'node[!isLabel]', style: {
+                'background-color': 'data(color)',
+                'label': 'data(label)',
+                'color': '#fff',
+                'text-valign': 'center', 'text-halign': 'center',
+                'width': 190, 'height': 68,
+                'shape': 'round-rectangle',
+                'font-family': 'Roboto, sans-serif',
+                'font-size': '11.5px', 'font-weight': '500',
+                'text-wrap': 'wrap', 'text-max-width': '170px',
+                'line-height': 1.35,
+                'border-width': 0,
+                'shadow-blur': 5, 'shadow-color': 'rgba(0,0,0,0.13)', 'shadow-offset-y': 3,
+                'transition-property': 'background-color, opacity, border-color, border-width, shadow-blur',
+                'transition-duration': '0.3s'
+            }},
+            // Selected
+            { selector: 'node[!isLabel]:selected', style: {
+                'border-width': 4, 'border-color': '#111827',
+                'shadow-blur': 16, 'shadow-color': 'rgba(0,0,0,0.3)', 'shadow-offset-y': 4
+            }},
+            // Faded
+            { selector: 'node[!isLabel].faded', style: { 'opacity': 0.12 }},
+            // Completed
+            { selector: 'node[!isLabel].completed', style: {
+                'border-width': 3, 'border-color': '#16a34a',
+                'border-style': 'solid',
+            }},
+            // Current semester
+            { selector: 'node[!isLabel].current-sem', style: {
+                'border-width': 4, 'border-color': '#f59e0b',
+                'shadow-blur': 14, 'shadow-color': 'rgba(245,158,11,0.4)', 'shadow-offset-y': 3
+            }},
+            // Edges
+            { selector: 'edge', style: {
+                'width': 3.5,
+                'curve-style': 'bezier',
+                'target-arrow-shape': 'triangle',
+                'line-color': '#374151',
+                'target-arrow-color': '#374151',
+                'arrow-scale': 1.3,
+                'opacity': 0.8,
+                'transition-property': 'opacity, line-color, target-arrow-color',
+                'transition-duration': '0.3s'
+            }},
+            { selector: 'edge.faded', style: { 'opacity': 0.06 }},
+            { selector: 'edge.highlighted', style: {
+                'line-color': '#dc2626', 'target-arrow-color': '#dc2626',
+                'width': 4.5, 'opacity': 1
+            }},
+            { selector: 'edge.highlighted-out', style: {
+                'line-color': '#15803d', 'target-arrow-color': '#15803d',
+                'width': 4.5, 'opacity': 1
+            }},
+        ],
+        layout: {
+            name: 'preset',
+            positions: node => positions[node.id()] || { x: 0, y: 0 },
+            fit: true, padding: 60
+        },
+        minZoom: 0.15, maxZoom: 2.5,
+        wheelSensitivity: 0.3,
+        autoungrabify: true,
+        boxSelectionEnabled: false,
+        selectionType: 'single'
+    });
 
-            const manualPositions = calculateManualPositions();
+    document.getElementById('loading-msg').style.display = 'none';
 
-            try {
-                const cy = cytoscape({
-                    container: document.getElementById('cy'),
-                    elements: elements,
-                    style: [
-                        { selector: 'node', style: {
-                            'background-color': 'data(color)', 
-                            'label': 'data(label)', 
-                            'color': '#fff',
-                            'text-valign': 'center', 
-                            'text-halign': 'center', 
-                            /* DIMENSÕES */
-                            'width': '180px', 
-                            'height': '70px', 
-                            'shape': 'round-rectangle', 
-                            'font-family': 'Roboto',
-                            /* FONTE */
-                            'font-size': '12px', 
-                            'font-weight': '500',
-                            'text-wrap': 'wrap', 
-                            /* ÁREA DE TEXTO */
-                            'text-max-width': '160px', 
-                            'line-height': 1.3,
-                            'border-width': 0,
-                            'text-outline-width': 0,
-                            'shadow-blur': 3, 'shadow-color': 'rgba(0,0,0,0.1)', 'shadow-offset-y': 2,
-                            'transition-property': 'background-color, opacity, border-color',
-                            'transition-duration': '0.4s',
-                            'transition-timing-function': 'ease-in-out'
-                        }},
-                        { selector: 'node:selected', style: { 
-                            'border-width': 4, 
-                            'border-color': '#333',
-                            'shadow-blur': 10, 'shadow-color': 'rgba(0,0,0,0.3)'
-                        }},
-                        { selector: 'node.faded', style: { 
-                            'opacity': 0.15,
-                            'shadow-opacity': 0 
-                        }},
-                        { selector: 'edge', style: {
-                            'width': 3, 
-                            'curve-style': 'bezier', 
-                            'target-arrow-shape': 'triangle',
-                            'line-color': '#ccc', 
-                            'target-arrow-color': '#ccc',
-                            'arrow-scale': 1.2,
-                            'transition-property': 'opacity, line-color, target-arrow-color',
-                            'transition-duration': '0.4s'
-                        }},
-                        { selector: 'edge[isPrerequisite]', style: {
-                            'width': 4, 
-                            'line-color': '#666', 
-                            'target-arrow-color': '#666'
-                        }},
-                        { selector: 'edge[type="soft"]', style: {
-                            'line-style': 'dashed',
-                            'line-dash-pattern': [6, 3],
-                            'line-color': '#999',
-                            'target-arrow-color': '#999'
-                        }},
-                        { selector: 'edge.faded', style: { 'opacity': 0.1 }}
-                    ],
-                    layout: {
-                        name: 'preset',
-                        positions: function(node) {
-                            return manualPositions[node.id()];
-                        },
-                        fit: true,
-                        padding: 60
-                    },
-                    minZoom: 0.2, 
-                    maxZoom: 2,
-                    wheelSensitivity: 0.3,
-                    autoungrabify: true,  // Impede arrastar os nodes
-                    boxSelectionEnabled: false  // Desabilita seleção por caixa
-                });
+    // Aplicar estado de progresso salvo
+    applyCompletedStyles();
 
-                document.getElementById('loading-msg').style.display = 'none';
-
-                // --- TOOLTIP LOGIC ---
-                const tooltip = document.getElementById('tooltip');
-
-                document.addEventListener('mousemove', function(e) {
-                    if (tooltip.style.display === 'block') {
-                        tooltip.style.left = (e.clientX + 15) + 'px';
-                        tooltip.style.top = (e.clientY + 20) + 'px';
-                    }
-                });
-
-                cy.on('mouseover', 'node', function(evt) {
-                    const node = evt.target;
-                    const data = node.data();
-                    let catName = data.category === 'basica' ? 'Formação Básica' :
-                                  data.category === 'especifica' ? 'Formação Específica' :
-                                  data.category === 'pratica' ? 'Dimensões Práticas' : 'Institucional';
-                    
-                    let semText = data.semester === 9 ? "Oferta Contínua (AGEAD)" : `${data.semester}º Semestre`;
-                    
-                    let preReqInfo = "";
-                    const incomingEdges = node.incomers('edge[isPrerequisite]');
-                    if(incomingEdges.length > 0) {
-                        preReqInfo = `<div class="reqs">⚠️ Requer aprovação anterior</div>`;
-                    }
-
-                    tooltip.innerHTML = `
-                        <h4>${data.full}</h4>
-                        <div class="meta">
-                            <span class="badge" style="background-color: ${data.color}">${catName}</span>
-                            <span>⏱️ ${data.hours}h</span>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #555; margin-top:5px;">
-                            📅 ${semText}
-                        </div>
-                        ${preReqInfo}
-                    `;
-                    tooltip.style.borderLeftColor = data.color;
-                    tooltip.style.display = 'block';
-                    document.body.style.cursor = 'pointer';
-                });
-
-                cy.on('mouseout', 'node', function() {
-                    tooltip.style.display = 'none';
-                    document.body.style.cursor = 'default';
-                });
-
-                // Clique (Highlight)
-                cy.on('tap', 'node', function(evt) {
-                    const node = evt.target;
-                    cy.elements().removeClass('faded');
-                    cy.elements().addClass('faded');
-                    node.removeClass('faded');
-                    node.successors().removeClass('faded'); 
-                    node.predecessors().removeClass('faded'); 
-                    node.select();
-                });
-
-                cy.on('tap', function(evt) {
-                    if(evt.target === cy){
-                        cy.elements().removeClass('faded');
-                        cy.elements().unselect();
-                    }
-                });
-
-                // Funções Globais
-                window.resetView = function() {
-                    cy.elements().removeClass('faded');
-                    cy.elements().unselect();
-                    window.fitGraph(); 
-                };
-
-                window.fitGraph = function() {
-                    cy.animate({
-                        fit: { eles: cy.elements(), padding: 60 },
-                        duration: 500
-                    });
-                };
-
-                window.filterCategory = function(cat) {
-                    cy.elements().removeClass('faded'); 
-                    setTimeout(() => {
-                        cy.elements().addClass('faded');
-                        const selectedNodes = cy.nodes(`[category = "${cat}"]`);
-                        selectedNodes.removeClass('faded');
-                    }, 10);
-                };
-
-                // Ajuste inicial
-                setTimeout(() => { cy.fit(null, 60); }, 200);
-
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loading-msg').innerHTML = "<h3 style='color:red'>Erro ao desenhar grafo.</h3>";
-            }
-        });
-
-        // === CONTROLE DO SIDEBAR MOBILE ===
-        window.toggleSidebar = function() {
-            // Só funciona em telas mobile
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                sidebar.classList.toggle('collapsed');
-            }
-        };
-
-        // Configuração inicial baseada no tamanho da tela
-        function setupSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth <= 768) {
-                sidebar.classList.add('collapsed');
-            } else {
-                sidebar.classList.remove('collapsed');
-            }
+    // ── TOOLTIP (hover) ──
+    const tooltip = document.getElementById('tooltip');
+    document.addEventListener('mousemove', e => {
+        if (tooltip.style.display === 'block') {
+            let x = e.clientX + 16, y = e.clientY + 18;
+            if (x + 270 > window.innerWidth)  x = e.clientX - 280;
+            if (y + 160 > window.innerHeight) y = e.clientY - 170;
+            tooltip.style.left = x + 'px';
+            tooltip.style.top  = y + 'px';
         }
+    });
 
-        // Executar ao carregar e ao redimensionar
-        window.addEventListener('load', setupSidebar);
-        window.addEventListener('resize', setupSidebar);
-    </script>
+    cy.on('mouseover', 'node[!isLabel]', evt => {
+        const d = evt.target.data();
+        const isComp = completed.includes(d.id);
+        const hasPrereq = evt.target.incomers('edge').length > 0;
+        const prereqNames = evt.target.incomers('node[!isLabel]').map(n => n.data('label')).join(', ');
+
+        tooltip.innerHTML = `
+            <h4>${d.full}</h4>
+            <div class="tip-meta">
+                <span class="badge" style="background:${d.color}">${CAT_LABELS[d.category]}</span>
+                <span class="tip-info">⏱ ${d.hours}h</span>
+                <span class="tip-info">📅 ${d.semester === 9 ? 'Oferta Contínua' : d.semester + 'º Semestre'}</span>
+            </div>
+            ${hasPrereq ? `<div class="tip-prereq">🔒 Requer: ${prereqNames}</div>` : ''}
+            ${isComp ? '<div class="tip-completed">✅ Disciplina marcada como cursada</div>' : ''}
+            <div class="tip-hint">Clique para ver ementa e detalhes completos</div>
+        `;
+        tooltip.style.borderLeftColor = d.color;
+        tooltip.style.display = 'block';
+        document.body.style.cursor = 'pointer';
+    });
+
+    cy.on('mouseout', 'node[!isLabel]', () => {
+        tooltip.style.display = 'none';
+        document.body.style.cursor = 'default';
+    });
+
+    // ── CLICK → DETALHE ──
+    cy.on('tap', 'node[!isLabel]', evt => {
+        const node = evt.target;
+        currentNode = node;
+        openPanel(node);
+        highlightNeighbors(node);
+    });
+
+    cy.on('tap', evt => {
+        if (evt.target === cy) {
+            closePanel();
+            cy.elements().removeClass('faded highlighted highlighted-out');
+            cy.elements().unselect();
+        }
+    });
+
+    // ajuste inicial
+    setTimeout(() => cy.fit(null, 60), 200);
+
+    updateProgressBar();
+});
+
+// ═══════════════════════════════════════════════════
+// 5. HIGHLIGHT DE VIZINHOS
+// ═══════════════════════════════════════════════════
+function highlightNeighbors(node) {
+    cy.elements().removeClass('faded highlighted highlighted-out');
+    cy.elements('[!isLabel]').addClass('faded');
+    node.removeClass('faded').select();
+
+    // predecessores (pré-requisitos)
+    const preds = node.predecessors('node[!isLabel]');
+    const predEdges = node.predecessors('edge');
+    preds.removeClass('faded');
+    predEdges.removeClass('faded').addClass('highlighted');
+
+    // sucessores (o que esta disciplina libera)
+    const succs = node.successors('node[!isLabel]');
+    const succEdges = node.successors('edge');
+    succs.removeClass('faded');
+    succEdges.removeClass('faded').addClass('highlighted-out');
+}
+
+// ═══════════════════════════════════════════════════
+// 6. PAINEL DE DETALHES
+// ═══════════════════════════════════════════════════
+function openPanel(node) {
+    const d = node.data();
+    const panel = document.getElementById('detail-panel');
+    const backdrop = document.getElementById('panel-backdrop');
+
+    document.getElementById('panel-title').textContent = d.full;
+
+    // Badges
+    const semText = d.semester === 9 ? 'Oferta Contínua (AGEAD)' : `${d.semester}º Semestre`;
+    document.getElementById('panel-badges').innerHTML = `
+        <span class="panel-badge" style="background:${d.color}">${CAT_LABELS[d.category]}</span>
+        <span class="panel-badge panel-badge-neutral"><i class="fas fa-clock"></i> ${d.hours}h</span>
+        <span class="panel-badge panel-badge-neutral"><i class="fas fa-calendar"></i> ${semText}</span>
+    `;
+
+    // Ementa
+    document.getElementById('panel-ementa').textContent = d.ementa || 'Ementa não disponível.';
+
+    // Pré-requisitos
+    const prereqNodes = node.incomers('node[!isLabel]');
+    const prereqEl = document.getElementById('panel-prereqs');
+    if (prereqNodes.length === 0) {
+        prereqEl.innerHTML = '<span class="empty-rel"><i class="fas fa-check-circle" style="color:#15803d"></i> Sem pré-requisitos — pode ser cursada a qualquer momento.</span>';
+    } else {
+        prereqEl.innerHTML = prereqNodes.map(n => {
+            const nd = n.data();
+            const semT = nd.semester === 9 ? 'Contínua' : `${nd.semester}º Sem.`;
+            return `<button class="rel-item" onclick="jumpTo('${nd.id}')">
+                <span class="rel-dot" style="background:${nd.color}"></span>
+                ${nd.full}
+                <span class="rel-sem">${semT}</span>
+            </button>`;
+        }).join('');
+    }
+
+    // Desbloqueia
+    const succNodes = node.successors('node[!isLabel]').filter('[!isLabel]');
+    const directSuccs = cy.edges(`[source="${d.id}"]`).targets().filter('[!isLabel]');
+    const unlocksEl = document.getElementById('panel-unlocks');
+    if (directSuccs.length === 0) {
+        unlocksEl.innerHTML = '<span class="empty-rel">Esta disciplina não é pré-requisito de nenhuma outra.</span>';
+    } else {
+        unlocksEl.innerHTML = directSuccs.map(n => {
+            const nd = n.data();
+            const semT = nd.semester === 9 ? 'Contínua' : `${nd.semester}º Sem.`;
+            return `<button class="rel-item" onclick="jumpTo('${nd.id}')">
+                <span class="rel-dot" style="background:${nd.color}"></span>
+                ${nd.full}
+                <span class="rel-sem">${semT}</span>
+            </button>`;
+        }).join('');
+    }
+
+    // Botão marcar
+    updateCheckButton(d.id);
+
+    panel.classList.add('open');
+    backdrop.classList.add('open');
+}
+
+function closePanel() {
+    document.getElementById('detail-panel').classList.remove('open');
+    document.getElementById('panel-backdrop').classList.remove('open');
+    cy.elements().removeClass('faded highlighted highlighted-out');
+    cy.elements().unselect();
+    currentNode = null;
+}
+
+function jumpTo(id) {
+    closePanel();
+    setTimeout(() => {
+        const node = cy.getElementById(id);
+        if (node) {
+            cy.animate({ center: { eles: node }, zoom: 1.2, duration: 400 });
+            setTimeout(() => {
+                currentNode = node;
+                openPanel(node);
+                highlightNeighbors(node);
+            }, 450);
+        }
+    }, 200);
+}
+
+// ═══════════════════════════════════════════════════
+// 7. PROGRESSO
+// ═══════════════════════════════════════════════════
+function updateCheckButton(id) {
+    const btn = document.getElementById('btn-check');
+    const isComp = completed.includes(id);
+    btn.className = isComp ? 'btn-check checked' : 'btn-check';
+    btn.innerHTML = isComp
+        ? '<i class="fas fa-check-circle"></i> Cursada ✓ (clique para desmarcar)'
+        : '<i class="far fa-circle"></i> Marcar como Cursada';
+}
+
+function toggleCompleted() {
+    if (!currentNode) return;
+    const id = currentNode.id();
+    if (completed.includes(id)) {
+        completed = completed.filter(x => x !== id);
+    } else {
+        completed.push(id);
+    }
+    saveCompleted(completed);
+    updateCheckButton(id);
+    applyCompletedStyles();
+    updateProgressBar();
+}
+
+function applyCompletedStyles() {
+    if (!cy) return;
+    cy.nodes('[!isLabel]').forEach(n => {
+        if (completed.includes(n.id())) {
+            n.addClass('completed');
+        } else {
+            n.removeClass('completed');
+        }
+    });
+}
+
+function clearProgress() {
+    if (!confirm('Deseja apagar todo o seu progresso marcado?')) return;
+    completed = [];
+    saveCompleted(completed);
+    applyCompletedStyles();
+    updateProgressBar();
+    const sel = document.getElementById('my-semester');
+    sel.value = '0';
+    applySemesterMode();
+}
+
+// ═══════════════════════════════════════════════════
+// 8. MEU SEMESTRE
+// ═══════════════════════════════════════════════════
+function applySemesterMode() {
+    if (!cy) return;
+    const sem = parseInt(document.getElementById('my-semester').value);
+    cy.nodes('[!isLabel]').removeClass('current-sem faded');
+    cy.elements().removeClass('faded');
+
+    if (sem === 0) return;
+
+    cy.nodes('[!isLabel]').forEach(n => {
+        const ns = n.data('semester');
+        if (ns === sem) {
+            n.addClass('current-sem');
+        } else if (ns > sem) {
+            n.addClass('faded');
+        }
+    });
+
+    // Destacar edges do semestre atual
+    cy.edges().forEach(e => {
+        const target = e.target();
+        if (target.data('semester') === sem) {
+            e.removeClass('faded');
+        } else if (target.data('semester') > sem) {
+            e.addClass('faded');
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════
+// 9. FILTRO POR CATEGORIA
+// ═══════════════════════════════════════════════════
+let activeFilter = null;
+function filterCategory(cat, el) {
+    if (activeFilter === cat) {
+        // Toggle off
+        activeFilter = null;
+        cy.elements().removeClass('faded');
+        document.querySelectorAll('.legend-item').forEach(x => x.classList.remove('active'));
+        return;
+    }
+    activeFilter = cat;
+    document.querySelectorAll('.legend-item').forEach(x => x.classList.remove('active'));
+    if (el) el.classList.add('active');
+    cy.elements('[!isLabel]').addClass('faded');
+    cy.nodes(`[!isLabel][category = "${cat}"]`).removeClass('faded');
+    // Show edges between visible nodes
+    cy.edges().forEach(e => {
+        const src = e.source().data('category');
+        const tgt = e.target().data('category');
+        if (src === cat || tgt === cat) e.removeClass('faded');
+    });
+}
+
+// ═══════════════════════════════════════════════════
+// 10. CONTROLES
+// ═══════════════════════════════════════════════════
+window.resetView = function() {
+    activeFilter = null;
+    document.querySelectorAll('.legend-item').forEach(x => x.classList.remove('active'));
+    document.getElementById('my-semester').value = '0';
+    cy.elements().removeClass('faded current-sem highlighted highlighted-out');
+    cy.elements().unselect();
+    closePanel();
+    fitGraph();
+};
+
+window.fitGraph = function() {
+    cy.animate({ fit: { eles: cy.elements(), padding: 60 }, duration: 500 });
+};
+
+// ═══════════════════════════════════════════════════
+// 11. SIDEBAR MOBILE
+// ═══════════════════════════════════════════════════
+window.toggleSidebar = function() {
+    if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+    }
+};
+
+function setupSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth <= 768) {
+        sidebar.classList.add('collapsed');
+    } else {
+        sidebar.classList.remove('collapsed');
+    }
+}
+
+window.addEventListener('load', setupSidebar);
+window.addEventListener('resize', () => { setupSidebar(); if(cy) cy.resize(); });
+</script>
 
 </body>
 </html>
