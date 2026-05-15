@@ -4,38 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fluxograma Curricular — Matemática Licenciatura UFMS/CPAR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
     <style>
         :root {
-            --cat-basica:       #1D4ED8;
-            --cat-especifica:   #B91C1C;
-            --cat-pratica:      #15803D;
-            --cat-institucional:#B45309;
+            /* UFMS Design System Tokens */
+            --ufms-primary:      #0088B7;
+            --ufms-primary-50:   #E6F4F9;
+            --ufms-primary-100:  #CCE9F3;
+            --ufms-primary-600:  #006A8F;
+            --ufms-primary-700:  #005273;
+            --ufms-primary-800:  #003A52;
+            --ufms-primary-900:  #002233;
+            --ufms-navy:         #001F5F;
+            --ufms-blue-symbol:  #0070BA;
+            --ufms-yellow:       #FFCD00;
+            --ufms-green:        #00A859;
+            --gradient-institutional: linear-gradient(135deg, #0088B7 0%, #2BA89D 50%, #6BC9A8 100%);
+            --gradient-deep:          linear-gradient(135deg, #002233 0%, #0088B7 100%);
+
+            /* Categorias — paleta institucional */
+            --cat-basica:       #0088B7;  /* Azul UFMS */
+            --cat-especifica:   #001F5F;  /* Azul Marinho bandeira */
+            --cat-pratica:      #00A859;  /* Verde bandeira */
+            --cat-institucional:#F57C00;  /* Warning âmbar */
+
             --sidebar-w:        340px;
-            --panel-w:          380px;
-            --bg:               #f0f2f5;
-            --surface:          #ffffff;
-            --border:           #e2e6ea;
-            --text:             #1a202c;
-            --text-muted:       #6b7280;
-            --primary:          #1a56db;
-            --primary-dark:     #1e429f;
-            --radius:           10px;
-            --shadow:           0 4px 24px rgba(0,0,0,0.09);
+            --panel-w:          400px;
+            --bg:               #F5F7F9;
+            --surface:          #FFFFFF;
+            --border:           #E0E5EA;
+            --text:             #1A1A1A;
+            --text-muted:       #616E7C;
+            --primary:          #0088B7;
+            --primary-dark:     #005273;
+            --radius-sm:        4px;
+            --radius-md:        8px;
+            --radius-lg:        16px;
+            --shadow-sm:        0 1px 2px rgba(0, 136, 183, 0.06);
+            --shadow-md:        0 4px 12px rgba(0, 136, 183, 0.10);
+            --shadow-lg:        0 12px 32px rgba(0, 136, 183, 0.16);
+            --shadow-xl:        0 24px 48px rgba(0, 136, 183, 0.20);
+            --transition-fast:  150ms ease;
+            --transition-base:  250ms ease;
+
+            --font-display:     'Poppins', system-ui, sans-serif;
+            --font-body:        'Inter', system-ui, sans-serif;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: var(--font-body);
             background: var(--bg);
             color: var(--text);
             height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: row;
+            -webkit-font-smoothing: antialiased;
         }
+
+        h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.005em; }
 
         /* ═══════════════════════════ SIDEBAR ═══════════════════════════ */
         .sidebar {
@@ -44,32 +74,71 @@
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+            box-shadow: var(--shadow-md);
             z-index: 30;
             flex-shrink: 0;
             overflow: hidden;
         }
         .sidebar-header {
-            padding: 18px 20px;
-            background: linear-gradient(135deg, #1e3a8a 0%, #1a56db 100%);
-            color: white;
+            padding: 22px 20px 18px;
+            background: var(--gradient-institutional);
+            color: #fff;
             flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .sidebar-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 60%, rgba(0, 34, 51, 0.18) 100%);
+            pointer-events: none;
         }
         .sidebar-header .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 4px;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
         }
-        .sidebar-header .brand-icon {
-            width: 36px; height: 36px;
-            background: rgba(255,255,255,0.18);
-            border-radius: 8px;
+        .sidebar-header .brand-logo {
+            width: 44px; height: 44px;
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: var(--radius-md);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem;
+            flex-shrink: 0;
+            padding: 6px;
         }
-        .sidebar-header h2 { font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
-        .sidebar-header h3 { font-size: 0.82rem; font-weight: 400; opacity: 0.85; margin-top: 2px; }
+        .sidebar-header .brand-logo img { width: 100%; height: 100%; object-fit: contain; }
+        .sidebar-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.005em;
+        }
+        .sidebar-header h3 {
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0.92;
+            margin-top: 3px;
+            font-family: var(--font-body);
+        }
+        .sidebar-header .slogan {
+            margin-top: 12px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            opacity: 0.85;
+            position: relative;
+            z-index: 1;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.18);
+        }
+        .sidebar-header .slogan .sep { opacity: 0.5; margin: 0 6px; }
 
         .sidebar-scroll {
             flex: 1;
@@ -80,107 +149,137 @@
         .sidebar-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
 
         /* Meu Semestre */
-        .section { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+        .section { padding: 16px 18px; border-bottom: 1px solid var(--border); }
         .section-title {
+            font-family: var(--font-display);
             font-size: 0.72rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
+            letter-spacing: 0.1em;
+            color: var(--ufms-primary-700);
+            margin-bottom: 12px;
+            display: flex; align-items: center; gap: 8px;
         }
+        .section-title [data-lucide] { width: 14px; height: 14px; color: var(--ufms-primary); }
         .semester-select {
             width: 100%;
-            padding: 8px 10px;
+            padding: 10px 12px;
             border: 1.5px solid var(--border);
-            border-radius: 7px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
             font-size: 0.9rem;
+            font-weight: 500;
             color: var(--text);
             background: var(--bg);
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230088B7' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 10px center;
+            background-position: right 12px center;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
         }
-        .semester-select:focus { outline: none; border-color: var(--primary); }
+        .semester-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ufms-primary-100); }
 
         /* Progresso */
-        .progress-bar-wrap { margin-top: 8px; }
-        .progress-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
-        .progress-bar { height: 8px; background: #e5e7eb; border-radius: 99px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #15803D, #22c55e); border-radius: 99px; transition: width 0.4s ease; }
+        .progress-bar-wrap { margin-top: 12px; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+        .progress-label strong { color: var(--ufms-primary); font-weight: 600; }
+        .progress-bar { height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--ufms-primary) 0%, var(--ufms-green) 100%); border-radius: 99px; transition: width 0.4s ease; }
 
         /* Stats */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .stat-card {
             background: var(--bg);
-            border-radius: 8px;
-            padding: 8px 10px;
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
             border: 1px solid var(--border);
+            transition: border-color var(--transition-fast);
         }
-        .stat-card .val { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
-        .stat-card .key { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
+        .stat-card:hover { border-color: var(--ufms-primary-100); }
+        .stat-card .val { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--ufms-primary); line-height: 1.1; }
+        .stat-card .key { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
         .stat-full { grid-column: 1 / -1; }
         .stat-note {
-            margin-top: 8px;
+            margin-top: 10px;
             font-size: 0.78rem;
-            color: var(--text-muted);
-            background: #f8f9fa;
-            border-left: 3px solid var(--primary);
-            padding: 8px 10px;
-            border-radius: 0 6px 6px 0;
-            line-height: 1.5;
+            color: var(--ufms-primary-800);
+            background: var(--ufms-primary-50);
+            border: 1px solid var(--ufms-primary-100);
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            line-height: 1.55;
+            display: flex; gap: 8px; align-items: flex-start;
         }
+        .stat-note [data-lucide] { width: 14px; height: 14px; color: var(--ufms-primary); flex-shrink: 0; margin-top: 2px; }
 
         /* Legenda */
         .legend-item {
             display: flex; align-items: center;
-            padding: 6px 8px; border-radius: 6px;
-            cursor: pointer; transition: background 0.15s;
-            margin-bottom: 3px;
+            padding: 8px 10px; border-radius: var(--radius-md);
+            cursor: pointer; transition: background var(--transition-fast), border-color var(--transition-fast);
+            margin-bottom: 4px;
             font-size: 0.88rem;
+            font-weight: 500;
+            border: 1px solid transparent;
         }
-        .legend-item:hover { background: var(--bg); }
-        .legend-item.active { background: var(--bg); outline: 2px solid var(--primary); }
+        .legend-item:hover { background: var(--bg); border-color: var(--border); }
+        .legend-item.active { background: var(--ufms-primary-50); border-color: var(--ufms-primary); }
         .color-dot {
-            width: 14px; height: 14px; border-radius: 4px;
+            width: 14px; height: 14px; border-radius: var(--radius-sm);
             margin-right: 10px; flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
         }
         .legend-item span { flex: 1; }
         .legend-count {
-            background: #e5e7eb;
+            background: var(--border);
             color: var(--text-muted);
-            border-radius: 99px;
+            border-radius: var(--radius-full);
+            font-family: var(--font-display);
             font-size: 0.7rem;
-            font-weight: 600;
-            padding: 1px 7px;
+            font-weight: 700;
+            padding: 2px 9px;
         }
+        .legend-item.active .legend-count { background: var(--ufms-primary); color: #fff; }
         .legend-note {
-            margin-top: 8px;
+            margin-top: 10px;
             font-size: 0.77rem;
-            color: var(--text-muted);
-            background: #fffbeb;
-            border-left: 3px solid #d97706;
-            padding: 8px 10px;
-            border-radius: 0 6px 6px 0;
-            line-height: 1.5;
+            color: #6B3F00;
+            background: #FFF7E6;
+            border: 1px solid #FFE0A8;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            line-height: 1.55;
+            display: flex; gap: 8px; align-items: flex-start;
         }
+        .legend-note [data-lucide] { width: 14px; height: 14px; color: #F57C00; flex-shrink: 0; margin-top: 2px; }
 
         /* Dica */
         .tip-box {
             font-size: 0.8rem;
-            color: var(--text-muted);
-            background: #f0f9ff;
-            border-left: 3px solid #0ea5e9;
-            padding: 9px 11px;
-            border-radius: 0 6px 6px 0;
-            line-height: 1.5;
+            color: var(--ufms-primary-800);
+            background: var(--ufms-primary-50);
+            border: 1px solid var(--ufms-primary-100);
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            line-height: 1.6;
         }
+        .tip-box .tip-head {
+            display: flex; align-items: center; gap: 6px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--ufms-primary-700);
+            margin-bottom: 6px;
+            font-size: 0.82rem;
+        }
+        .tip-box .tip-head [data-lucide] { width: 14px; height: 14px; }
+        .tip-box ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; }
+        .tip-box li { padding-left: 14px; position: relative; }
+        .tip-box li::before { content: '·'; position: absolute; left: 4px; color: var(--ufms-primary); font-weight: 700; }
 
         /* Controls */
         .controls {
-            padding: 12px 16px;
+            padding: 14px 18px;
             border-top: 1px solid var(--border);
             display: flex;
             gap: 8px;
@@ -190,63 +289,71 @@
         .btn {
             flex: 1; padding: 10px 8px;
             border: 1.5px solid var(--border);
-            border-radius: 7px;
+            border-radius: var(--radius-md);
             cursor: pointer;
-            font-size: 0.82rem;
-            font-weight: 500;
+            font-family: var(--font-display);
+            font-size: 0.78rem;
+            font-weight: 600;
             background: var(--surface);
             color: var(--text);
             display: flex; align-items: center; justify-content: center; gap: 6px;
-            transition: all 0.18s;
+            transition: all var(--transition-base);
         }
-        .btn:hover { background: var(--bg); border-color: #9ca3af; }
-        .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
-        .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
-        .btn-danger { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
-        .btn-danger:hover { background: #fecaca; }
+        .btn [data-lucide] { width: 14px; height: 14px; }
+        .btn:hover { background: var(--bg); border-color: var(--ufms-primary); color: var(--ufms-primary); }
+        .btn-primary { background: var(--ufms-primary); color: #fff; border-color: var(--ufms-primary); }
+        .btn-primary:hover { background: var(--ufms-primary-700); border-color: var(--ufms-primary-700); color: #fff; box-shadow: var(--shadow-md); }
+        .btn-danger { background: #fff; color: #D32F2F; border-color: #F5C7C7; }
+        .btn-danger:hover { background: #FDECEC; color: #D32F2F; border-color: #D32F2F; }
 
         /* ═══════════════════════════ MAIN CANVAS ═══════════════════════════ */
         .main-content {
             flex: 1;
             position: relative;
-            background: #f7f8fc;
-            background-image: radial-gradient(#d1d5db 1px, transparent 1px);
-            background-size: 22px 22px;
+            background: #FAFCFD;
+            background-image: radial-gradient(rgba(0, 136, 183, 0.12) 1px, transparent 1px);
+            background-size: 24px 24px;
             overflow: hidden;
         }
         #cy { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; outline: none; }
         #loading-msg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-            color: #9ca3af; font-size: 1.2rem; z-index: 0; pointer-events: none; text-align: center;
+            color: var(--text-muted); font-family: var(--font-display); font-size: 1rem; font-weight: 600;
+            z-index: 0; pointer-events: none; text-align: center;
         }
-        #loading-msg i { display: block; margin-bottom: 10px; font-size: 2rem; }
+        #loading-msg [data-lucide] { width: 32px; height: 32px; display: block; margin: 0 auto 10px; color: var(--ufms-primary); animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         /* ═══════════════════════════ TOOLTIP (HOVER) ═══════════════════════════ */
         #tooltip {
             display: none;
             position: fixed;
-            background: rgba(255,255,255,0.97);
-            padding: 11px 14px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.14);
+            background: #fff;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
             pointer-events: none;
             z-index: 9999;
-            max-width: 260px;
-            border: 1px solid #e5e7eb;
+            max-width: 280px;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--ufms-primary);
             font-size: 0.85rem;
-            border-left: 4px solid #ccc;
+            font-family: var(--font-body);
         }
-        #tooltip h4 { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 6px; line-height: 1.3; }
-        #tooltip .tip-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        #tooltip h4 { font-family: var(--font-display); font-size: 0.92rem; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+        #tooltip .tip-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
         #tooltip .badge {
-            padding: 2px 8px; border-radius: 4px;
-            color: white; font-weight: 600; font-size: 0.72rem;
-            text-transform: uppercase; letter-spacing: 0.4px;
+            padding: 3px 9px; border-radius: var(--radius-sm);
+            color: white; font-weight: 600; font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            font-family: var(--font-display);
         }
-        #tooltip .tip-info { color: var(--text-muted); font-size: 0.82rem; }
-        #tooltip .tip-prereq { margin-top: 7px; font-size: 0.8rem; color: #dc2626; font-weight: 500; }
-        #tooltip .tip-completed { margin-top: 7px; font-size: 0.8rem; color: #15803d; font-weight: 500; }
-        #tooltip .tip-hint { margin-top: 6px; font-size: 0.76rem; color: #9ca3af; font-style: italic; }
+        #tooltip .tip-info { color: var(--text-muted); font-size: 0.78rem; display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
+        #tooltip .tip-info [data-lucide] { width: 12px; height: 12px; }
+        #tooltip .tip-prereq { margin-top: 8px; font-size: 0.8rem; color: #D32F2F; font-weight: 500; display: flex; gap: 6px; align-items: flex-start; }
+        #tooltip .tip-completed { margin-top: 8px; font-size: 0.8rem; color: var(--ufms-green); font-weight: 600; display: flex; gap: 6px; align-items: center; }
+        #tooltip .tip-prereq [data-lucide], #tooltip .tip-completed [data-lucide] { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; }
+        #tooltip .tip-hint { margin-top: 8px; font-size: 0.74rem; color: var(--text-muted); font-style: italic; padding-top: 8px; border-top: 1px solid var(--border); }
 
         /* ═══════════════════════════ DETAIL PANEL ═══════════════════════════ */
         #detail-panel {
@@ -255,7 +362,7 @@
             width: var(--panel-w);
             height: 100vh;
             background: var(--surface);
-            box-shadow: -6px 0 30px rgba(0,0,0,0.13);
+            box-shadow: var(--shadow-xl);
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -265,90 +372,104 @@
         #detail-panel.open { transform: translateX(0); }
 
         .panel-header {
-            padding: 18px 20px 14px;
+            padding: 20px 22px 16px;
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
+            background: var(--gradient-primary-soft, linear-gradient(135deg, var(--ufms-primary-50) 0%, #fff 100%));
         }
         .panel-header-top {
-            display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px;
+            display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px;
         }
         .panel-close {
-            background: var(--bg); border: none; cursor: pointer;
-            width: 32px; height: 32px; border-radius: 6px;
+            background: #fff; border: 1px solid var(--border); cursor: pointer;
+            width: 32px; height: 32px; border-radius: var(--radius-md);
             display: flex; align-items: center; justify-content: center;
-            color: var(--text-muted); font-size: 1rem;
-            transition: background 0.15s;
+            color: var(--text-muted);
+            transition: all var(--transition-fast);
             flex-shrink: 0;
         }
-        .panel-close:hover { background: #fee2e2; color: #dc2626; }
-        .panel-title { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.35; flex: 1; }
+        .panel-close [data-lucide] { width: 16px; height: 16px; }
+        .panel-close:hover { background: #FDECEC; color: #D32F2F; border-color: #F5C7C7; }
+        .panel-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--text); line-height: 1.3; flex: 1; letter-spacing: -0.005em; }
         .panel-badges { display: flex; gap: 6px; flex-wrap: wrap; }
         .panel-badge {
             display: inline-flex; align-items: center; gap: 5px;
-            padding: 4px 10px; border-radius: 6px;
-            font-size: 0.78rem; font-weight: 600; color: white;
+            padding: 4px 10px; border-radius: var(--radius-full);
+            font-family: var(--font-display);
+            font-size: 0.72rem; font-weight: 600; color: white;
+            letter-spacing: 0.02em;
         }
+        .panel-badge [data-lucide] { width: 12px; height: 12px; }
         .panel-badge-neutral {
-            background: var(--bg);
+            background: #fff;
             color: var(--text-muted);
             border: 1px solid var(--border);
             font-weight: 500;
         }
 
-        .panel-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+        .panel-body { flex: 1; overflow-y: auto; padding: 18px 22px; }
         .panel-body::-webkit-scrollbar { width: 5px; }
-        .panel-body::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        .panel-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-        .panel-section { margin-bottom: 18px; }
+        .panel-section { margin-bottom: 20px; }
         .panel-section-title {
+            font-family: var(--font-display);
             font-size: 0.72rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.7px;
-            color: var(--text-muted);
-            margin-bottom: 7px;
-            display: flex; align-items: center; gap: 6px;
+            letter-spacing: 0.1em;
+            color: var(--ufms-primary-700);
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 7px;
         }
+        .panel-section-title [data-lucide] { width: 14px; height: 14px; color: var(--ufms-primary); }
         .ementa-text {
             font-size: 0.88rem;
             line-height: 1.6;
-            color: #374151;
+            color: #323F4B;
             background: var(--bg);
-            padding: 11px 13px;
-            border-radius: 8px;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--border);
         }
-        .rel-list { display: flex; flex-direction: column; gap: 5px; }
+        .rel-list { display: flex; flex-direction: column; gap: 6px; }
         .rel-item {
-            display: flex; align-items: center; gap: 8px;
-            padding: 7px 10px;
-            border-radius: 7px;
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 12px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--border);
+            font-family: var(--font-body);
             font-size: 0.84rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all var(--transition-fast);
             text-align: left;
-            background: var(--surface);
+            background: #fff;
             width: 100%;
+            color: var(--text);
         }
-        .rel-item:hover { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
-        .rel-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
-        .rel-sem { font-size: 0.72rem; color: var(--text-muted); margin-left: auto; white-space: nowrap; }
-        .empty-rel { font-size: 0.84rem; color: var(--text-muted); font-style: italic; }
+        .rel-item:hover { border-color: var(--ufms-primary); background: var(--ufms-primary-50); color: var(--ufms-primary-700); }
+        .rel-dot { width: 10px; height: 10px; border-radius: var(--radius-sm); flex-shrink: 0; box-shadow: var(--shadow-sm); }
+        .rel-sem { font-size: 0.72rem; color: var(--text-muted); margin-left: auto; white-space: nowrap; font-family: var(--font-display); font-weight: 600; }
+        .empty-rel { font-size: 0.84rem; color: var(--text-muted); font-style: italic; display: flex; gap: 6px; align-items: center; }
+        .empty-rel [data-lucide] { width: 14px; height: 14px; color: var(--ufms-green); }
 
-        .panel-footer { padding: 14px 20px; border-top: 1px solid var(--border); flex-shrink: 0; }
+        .panel-footer { padding: 16px 22px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--bg); }
         .btn-check {
-            width: 100%; padding: 11px;
-            border-radius: 8px; border: 2px solid var(--cat-pratica);
-            background: var(--surface);
-            color: var(--cat-pratica);
+            width: 100%; padding: 12px;
+            border-radius: var(--radius-md); border: 2px solid var(--ufms-green);
+            background: #fff;
+            color: var(--ufms-green);
+            font-family: var(--font-display);
             font-size: 0.9rem; font-weight: 600;
             cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.2s;
+            transition: all var(--transition-base);
         }
-        .btn-check:hover { background: #f0fdf4; }
-        .btn-check.checked { background: var(--cat-pratica); color: white; }
+        .btn-check [data-lucide] { width: 16px; height: 16px; }
+        .btn-check:hover { background: #E6F7EF; box-shadow: var(--shadow-md); }
+        .btn-check.checked { background: var(--ufms-green); color: white; }
+        .btn-check.checked:hover { background: #008A4A; }
 
         /* ═══════════════════════════ SEMESTER BADGES (canvas overlay) ═══════════════════════════ */
         #sem-overlays {
@@ -360,26 +481,29 @@
         .sem-overlay {
             position: absolute;
             transform: translate(-50%, -50%);
-            background: rgba(255,255,255,0.9);
-            border: 1.5px solid #d1d5db;
-            border-radius: 6px;
-            padding: 3px 12px;
-            font-size: 0.75rem;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 4px 12px;
+            font-family: var(--font-display);
+            font-size: 0.72rem;
             font-weight: 700;
-            color: #374151;
+            color: var(--ufms-primary-700);
             white-space: nowrap;
             pointer-events: none;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow-sm);
             transition: opacity 0.2s;
+            letter-spacing: 0.02em;
         }
-        .sem-overlay.highlight { background: #dbeafe; border-color: var(--primary); color: var(--primary); }
+        .sem-overlay.highlight { background: var(--ufms-primary); border-color: var(--ufms-primary); color: #fff; }
 
         /* ═══════════════════════════ BACKDROP ═══════════════════════════ */
         #panel-backdrop {
             display: none;
             position: fixed; inset: 0;
-            background: rgba(0,0,0,0.25);
+            background: rgba(0, 34, 51, 0.45);
             z-index: 99;
+            backdrop-filter: blur(1px);
         }
         #panel-backdrop.open { display: block; }
 
@@ -410,19 +534,20 @@
 <aside class="sidebar collapsed" id="sidebar">
     <div class="sidebar-header" onclick="toggleSidebar()">
         <div class="brand">
-            <div class="brand-icon"><i class="fas fa-project-diagram"></i></div>
+            <div class="brand-logo"><img src="assets/ufms_logo_negativo.png" alt="UFMS"></div>
             <div>
                 <h2>Matemática — Licenciatura</h2>
-                <h3>UFMS · Campus de Paranaíba · Vigência 2026/1</h3>
+                <h3>UFMS · Câmpus de Paranaíba · Vigência 2026/1</h3>
             </div>
         </div>
+        <div class="slogan">Inovadora<span class="sep">·</span>Sustentável<span class="sep">·</span>Humana</div>
     </div>
 
     <div class="sidebar-scroll" id="sidebar-scroll">
 
         <!-- Meu Semestre -->
         <div class="section">
-            <div class="section-title"><i class="fas fa-calendar-alt" style="color:var(--primary)"></i> Meu Semestre Atual</div>
+            <div class="section-title"><i data-lucide="calendar"></i> Meu Semestre Atual</div>
             <select class="semester-select" id="my-semester" onchange="applySemesterMode()">
                 <option value="0">— Selecione seu semestre —</option>
                 <option value="1">1º Semestre</option>
@@ -437,7 +562,7 @@
             <div class="progress-bar-wrap" id="progress-wrap">
                 <div class="progress-label">
                     <span>Meu progresso</span>
-                    <span id="progress-text">0 / 47 disciplinas</span>
+                    <strong id="progress-text">0 / 47 disciplinas</strong>
                 </div>
                 <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
             </div>
@@ -445,7 +570,7 @@
 
         <!-- Estatísticas -->
         <div class="section">
-            <div class="section-title"><i class="fas fa-chart-bar" style="color:var(--primary)"></i> Dados do Curso</div>
+            <div class="section-title"><i data-lucide="bar-chart-3"></i> Dados do Curso</div>
             <div class="stat-grid">
                 <div class="stat-card"><div class="val">3.296h</div><div class="key">Carga Horária Total</div></div>
                 <div class="stat-card"><div class="val">8 Sem.</div><div class="key">Duração Prevista</div></div>
@@ -457,14 +582,14 @@
                 </div>
             </div>
             <div class="stat-note">
-                <i class="fas fa-info-circle" style="color:var(--primary)"></i>
-                Inclui <strong>200h</strong> de Atividades Complementares, <strong>236h</strong> de Extensão Obrigatória e <strong>90h</strong> de Componentes Institucionais (Núcleo de Formação Cidadã).
+                <i data-lucide="info"></i>
+                <span>Inclui <strong>200h</strong> de Atividades Complementares, <strong>236h</strong> de Extensão Obrigatória e <strong>90h</strong> de Componentes Institucionais (Núcleo de Formação Cidadã).</span>
             </div>
         </div>
 
         <!-- Legenda -->
         <div class="section">
-            <div class="section-title"><i class="fas fa-circle" style="color:var(--primary)"></i> Categorias (clique para filtrar)</div>
+            <div class="section-title"><i data-lucide="layers"></i> Categorias <span style="font-weight:500; text-transform:none; letter-spacing:0; color:var(--text-muted); margin-left:auto;">clique p/ filtrar</span></div>
             <div class="legend-item" onclick="filterCategory('basica', this)">
                 <div class="color-dot" style="background:var(--cat-basica)"></div>
                 <span>Formação Básica</span>
@@ -486,20 +611,22 @@
                 <span class="legend-count">3</span>
             </div>
             <div class="legend-note">
-                <i class="fas fa-clock" style="color:#d97706"></i>
-                As <strong>Componentes Institucionais</strong> são ofertadas continuamente pela AGEAD e podem ser cursadas a qualquer momento (total: 90h).
+                <i data-lucide="clock"></i>
+                <span>As <strong>Componentes Institucionais</strong> são ofertadas continuamente pela AGEAD e podem ser cursadas a qualquer momento (total: 90h).</span>
             </div>
         </div>
 
         <!-- Dica -->
         <div class="section">
             <div class="tip-box">
-                <strong><i class="fas fa-lightbulb" style="color:#0ea5e9"></i> Como usar:</strong><br>
-                • <strong>Passe o mouse</strong> sobre uma disciplina para ver informações rápidas.<br>
-                • <strong>Clique</strong> em uma disciplina para abrir o painel completo (ementa, pré-requisitos e o que ela desbloqueia).<br>
-                • <strong>Marque</strong> as disciplinas já cursadas para acompanhar seu progresso.<br>
-                • As <strong>setas escuras</strong> indicam pré-requisito oficial.<br>
-                • Use <strong>"Meu Semestre"</strong> para destacar o que você deve matricular agora.
+                <div class="tip-head"><i data-lucide="lightbulb"></i> Como usar</div>
+                <ul>
+                    <li><strong>Passe o mouse</strong> sobre uma disciplina para ver informações rápidas.</li>
+                    <li><strong>Clique</strong> para abrir o painel completo (ementa, pré-requisitos e o que ela desbloqueia).</li>
+                    <li><strong>Marque</strong> as disciplinas já cursadas para acompanhar seu progresso.</li>
+                    <li>As <strong>setas escuras</strong> indicam pré-requisito oficial.</li>
+                    <li>Use <strong>“Meu Semestre”</strong> para destacar o que matricular agora.</li>
+                </ul>
             </div>
         </div>
 
@@ -507,20 +634,20 @@
 
     <div class="controls">
         <button class="btn btn-danger" onclick="clearProgress()" title="Apagar progresso marcado">
-            <i class="fas fa-trash-alt"></i> Limpar
+            <i data-lucide="trash-2"></i> Limpar
         </button>
         <button class="btn" onclick="resetView()">
-            <i class="fas fa-undo"></i> Resetar
+            <i data-lucide="rotate-ccw"></i> Resetar
         </button>
         <button class="btn btn-primary" onclick="fitGraph()">
-            <i class="fas fa-expand-arrows-alt"></i> Ajustar
+            <i data-lucide="maximize"></i> Ajustar
         </button>
     </div>
 </aside>
 
 <!-- CANVAS -->
 <main class="main-content">
-    <div id="loading-msg"><i class="fas fa-spinner fa-spin"></i> Gerando fluxograma...</div>
+    <div id="loading-msg"><i data-lucide="loader-2"></i> Gerando fluxograma…</div>
     <div id="cy"></div>
     <div id="sem-overlays"></div>
 </main>
@@ -536,27 +663,27 @@
     <div class="panel-header">
         <div class="panel-header-top">
             <h2 class="panel-title" id="panel-title">—</h2>
-            <button class="panel-close" onclick="closePanel()"><i class="fas fa-times"></i></button>
+            <button class="panel-close" onclick="closePanel()"><i data-lucide="x"></i></button>
         </div>
         <div class="panel-badges" id="panel-badges"></div>
     </div>
     <div class="panel-body">
         <div class="panel-section" id="panel-ementa-sec">
-            <div class="panel-section-title"><i class="fas fa-book-open"></i> Ementa</div>
+            <div class="panel-section-title"><i data-lucide="book-open"></i> Ementa</div>
             <div class="ementa-text" id="panel-ementa">—</div>
         </div>
         <div class="panel-section" id="panel-prereq-sec">
-            <div class="panel-section-title"><i class="fas fa-arrow-right" style="color:#dc2626"></i> Pré-Requisitos Obrigatórios</div>
+            <div class="panel-section-title"><i data-lucide="lock" style="color:#D32F2F !important"></i> Pré-Requisitos Obrigatórios</div>
             <div class="rel-list" id="panel-prereqs"></div>
         </div>
         <div class="panel-section" id="panel-unlocks-sec">
-            <div class="panel-section-title"><i class="fas fa-unlock" style="color:#15803d"></i> Disciplinas que esta libera</div>
+            <div class="panel-section-title"><i data-lucide="unlock" style="color:var(--ufms-green) !important"></i> Disciplinas que esta libera</div>
             <div class="rel-list" id="panel-unlocks"></div>
         </div>
     </div>
     <div class="panel-footer">
         <button class="btn-check" id="btn-check" onclick="toggleCompleted()">
-            <i class="fas fa-check-circle"></i> Marcar como Cursada
+            <i data-lucide="circle"></i> Marcar como Cursada
         </button>
     </div>
 </div>
@@ -566,10 +693,10 @@
 // 1. DADOS — DISCIPLINAS
 // ═══════════════════════════════════════════════════
 const COLORS = {
-    basica:       '#1D4ED8',
-    especifica:   '#B91C1C',
-    pratica:      '#15803D',
-    institucional:'#B45309'
+    basica:       '#0088B7',  /* Azul UFMS */
+    especifica:   '#001F5F',  /* Azul Marinho (bandeira) */
+    pratica:      '#00A859',  /* Verde (bandeira) */
+    institucional:'#F57C00'   /* Warning institucional */
 };
 
 const CAT_LABELS = {
@@ -768,7 +895,7 @@ let currentNode = null;
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof cytoscape === 'undefined') {
         document.getElementById('loading-msg').innerHTML =
-            "<span style='color:#dc2626'><i class='fas fa-exclamation-triangle'></i> Erro: biblioteca não carregou. Verifique sua conexão.</span>";
+            "<span style='color:#D32F2F'><i data-lucide='alert-triangle'></i> Erro: biblioteca não carregou. Verifique sua conexão.</span>";
         return;
     }
 
@@ -820,14 +947,19 @@ document.addEventListener('DOMContentLoaded', () => {
             { selector: 'node[?isLabel]', style: {
                 'background-opacity': 0, 'border-width': 0,
                 'label': 'data(label)',
-                'color': '#374151', 'font-size': '13px', 'font-weight': '700',
+                'color': '#005273',
+                'font-family': 'Poppins, system-ui, sans-serif',
+                'font-size': '13px', 'font-weight': '700',
                 'text-valign': 'center', 'text-halign': 'center',
-                'width': 260, 'height': 24,
+                'width': 280, 'height': 26,
                 'events': 'no',
                 'text-background-color': '#fff',
-                'text-background-opacity': 0.85,
-                'text-background-padding': '5px',
-                'text-background-shape': 'roundrectangle'
+                'text-background-opacity': 0.92,
+                'text-background-padding': '6px',
+                'text-background-shape': 'roundrectangle',
+                'text-border-color': '#CCE9F3',
+                'text-border-width': 1,
+                'text-border-opacity': 1
             }},
             // Regular nodes
             { selector: 'node[!isLabel]', style: {
@@ -837,51 +969,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 'text-valign': 'center', 'text-halign': 'center',
                 'width': 190, 'height': 68,
                 'shape': 'round-rectangle',
-                'font-family': 'Roboto, sans-serif',
+                'font-family': 'Inter, system-ui, sans-serif',
                 'font-size': '11.5px', 'font-weight': '500',
                 'text-wrap': 'wrap', 'text-max-width': '170px',
                 'line-height': 1.35,
                 'border-width': 0,
-                'shadow-blur': 5, 'shadow-color': 'rgba(0,0,0,0.13)', 'shadow-offset-y': 3,
+                'shadow-blur': 8, 'shadow-color': 'rgba(0,136,183,0.18)', 'shadow-offset-y': 3,
                 'transition-property': 'background-color, opacity, border-color, border-width, shadow-blur',
                 'transition-duration': '0.3s'
             }},
             // Selected
             { selector: 'node[!isLabel]:selected', style: {
-                'border-width': 4, 'border-color': '#111827',
-                'shadow-blur': 16, 'shadow-color': 'rgba(0,0,0,0.3)', 'shadow-offset-y': 4
+                'border-width': 4, 'border-color': '#002233',
+                'shadow-blur': 18, 'shadow-color': 'rgba(0,34,51,0.35)', 'shadow-offset-y': 4
             }},
             // Faded
-            { selector: 'node[!isLabel].faded', style: { 'opacity': 0.12 }},
+            { selector: 'node[!isLabel].faded', style: { 'opacity': 0.14 }},
             // Completed
             { selector: 'node[!isLabel].completed', style: {
-                'border-width': 3, 'border-color': '#16a34a',
+                'border-width': 3, 'border-color': '#00A859',
                 'border-style': 'solid',
             }},
             // Current semester
             { selector: 'node[!isLabel].current-sem', style: {
-                'border-width': 4, 'border-color': '#f59e0b',
-                'shadow-blur': 14, 'shadow-color': 'rgba(245,158,11,0.4)', 'shadow-offset-y': 3
+                'border-width': 4, 'border-color': '#FFCD00',
+                'shadow-blur': 16, 'shadow-color': 'rgba(255,205,0,0.55)', 'shadow-offset-y': 3
             }},
             // Edges
             { selector: 'edge', style: {
-                'width': 3.5,
+                'width': 3,
                 'curve-style': 'bezier',
                 'target-arrow-shape': 'triangle',
-                'line-color': '#374151',
-                'target-arrow-color': '#374151',
+                'line-color': '#4A5568',
+                'target-arrow-color': '#4A5568',
                 'arrow-scale': 1.3,
-                'opacity': 0.8,
+                'opacity': 0.7,
                 'transition-property': 'opacity, line-color, target-arrow-color',
                 'transition-duration': '0.3s'
             }},
             { selector: 'edge.faded', style: { 'opacity': 0.06 }},
             { selector: 'edge.highlighted', style: {
-                'line-color': '#dc2626', 'target-arrow-color': '#dc2626',
+                'line-color': '#D32F2F', 'target-arrow-color': '#D32F2F',
                 'width': 4.5, 'opacity': 1
             }},
             { selector: 'edge.highlighted-out', style: {
-                'line-color': '#15803d', 'target-arrow-color': '#15803d',
+                'line-color': '#00A859', 'target-arrow-color': '#00A859',
                 'width': 4.5, 'opacity': 1
             }},
         ],
@@ -924,15 +1056,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4>${d.full}</h4>
             <div class="tip-meta">
                 <span class="badge" style="background:${d.color}">${CAT_LABELS[d.category]}</span>
-                <span class="tip-info">⏱ ${d.hours}h</span>
-                <span class="tip-info">📅 ${d.semester === 9 ? 'Oferta Contínua' : d.semester + 'º Semestre'}</span>
+                <span class="tip-info"><i data-lucide="clock"></i> ${d.hours}h</span>
+                <span class="tip-info"><i data-lucide="calendar"></i> ${d.semester === 9 ? 'Oferta Contínua' : d.semester + 'º Sem.'}</span>
             </div>
-            ${hasPrereq ? `<div class="tip-prereq">🔒 Requer: ${prereqNames}</div>` : ''}
-            ${isComp ? '<div class="tip-completed">✅ Disciplina marcada como cursada</div>' : ''}
+            ${hasPrereq ? `<div class="tip-prereq"><i data-lucide="lock"></i> Requer: ${prereqNames}</div>` : ''}
+            ${isComp ? '<div class="tip-completed"><i data-lucide="check-circle-2"></i> Disciplina cursada</div>' : ''}
             <div class="tip-hint">Clique para ver ementa e detalhes completos</div>
         `;
         tooltip.style.borderLeftColor = d.color;
         tooltip.style.display = 'block';
+        if (window.lucide) lucide.createIcons({ attrs: { stroke: 'currentColor' } });
         document.body.style.cursor = 'pointer';
     });
 
@@ -961,6 +1094,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => cy.fit(null, 60), 200);
 
     updateProgressBar();
+    if (window.lucide) lucide.createIcons();
 });
 
 // ═══════════════════════════════════════════════════
@@ -998,8 +1132,8 @@ function openPanel(node) {
     const semText = d.semester === 9 ? 'Oferta Contínua (AGEAD)' : `${d.semester}º Semestre`;
     document.getElementById('panel-badges').innerHTML = `
         <span class="panel-badge" style="background:${d.color}">${CAT_LABELS[d.category]}</span>
-        <span class="panel-badge panel-badge-neutral"><i class="fas fa-clock"></i> ${d.hours}h</span>
-        <span class="panel-badge panel-badge-neutral"><i class="fas fa-calendar"></i> ${semText}</span>
+        <span class="panel-badge panel-badge-neutral"><i data-lucide="clock"></i> ${d.hours}h</span>
+        <span class="panel-badge panel-badge-neutral"><i data-lucide="calendar"></i> ${semText}</span>
     `;
 
     // Ementa
@@ -1009,7 +1143,7 @@ function openPanel(node) {
     const prereqNodes = node.incomers('node[!isLabel]');
     const prereqEl = document.getElementById('panel-prereqs');
     if (prereqNodes.length === 0) {
-        prereqEl.innerHTML = '<span class="empty-rel"><i class="fas fa-check-circle" style="color:#15803d"></i> Sem pré-requisitos — pode ser cursada a qualquer momento.</span>';
+        prereqEl.innerHTML = '<span class="empty-rel"><i data-lucide="check-circle-2"></i> Sem pré-requisitos — pode ser cursada a qualquer momento.</span>';
     } else {
         prereqEl.innerHTML = prereqNodes.map(n => {
             const nd = n.data();
@@ -1045,6 +1179,7 @@ function openPanel(node) {
 
     panel.classList.add('open');
     backdrop.classList.add('open');
+    if (window.lucide) lucide.createIcons();
 }
 
 function closePanel() {
@@ -1078,8 +1213,9 @@ function updateCheckButton(id) {
     const isComp = completed.includes(id);
     btn.className = isComp ? 'btn-check checked' : 'btn-check';
     btn.innerHTML = isComp
-        ? '<i class="fas fa-check-circle"></i> Cursada ✓ (clique para desmarcar)'
-        : '<i class="far fa-circle"></i> Marcar como Cursada';
+        ? '<i data-lucide="check-circle-2"></i> Cursada (clique para desmarcar)'
+        : '<i data-lucide="circle"></i> Marcar como Cursada';
+    if (window.lucide) lucide.createIcons();
 }
 
 function toggleCompleted() {
